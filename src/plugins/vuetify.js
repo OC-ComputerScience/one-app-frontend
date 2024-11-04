@@ -5,12 +5,15 @@ import "vuetify/styles";
 // Vuetify
 import { createVuetify } from "vuetify";
 
-const OCTheme = {
+import { loadFonts } from "./webfontloader";
+loadFonts();
+
+const baseTheme = {
   dark: false,
   colors: {
-    primary: "#80162B",
-    secondary: "#E1E1E1",
-    accent: "#47121D",
+    primary: "#1976D2",
+    secondary: "#575757",
+    accent: "#FF0000",
     success: "#47121D",
     error: "#EE5044",
     teal: "#63BAC0",
@@ -20,11 +23,16 @@ const OCTheme = {
   },
 };
 
-export default createVuetify({
+const vuetify = createVuetify({
   theme: {
-    defaultTheme: "OCTheme",
+    defaultTheme: "baseTheme",
     themes: {
-      OCTheme,
+      baseTheme,
     },
   },
+  icons: {
+    defaultSet: "mdi",
+  },
 });
+
+export default vuetify;
