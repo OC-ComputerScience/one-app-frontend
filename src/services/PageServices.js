@@ -4,7 +4,7 @@ export default {
   getPages() {
     return apiClient.get("pages");
   },
-  getPages(id) {
+  getPageById(id) {
     return apiClient.get("pages/" + id);
   },
   addPages(data) {
