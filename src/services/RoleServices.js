@@ -4,7 +4,7 @@ export default {
   getRoles() {
     return apiClient.get("roles");
   },
-  getRoles(id) {
+  getRoleById(id) {
     return apiClient.get("roles/" + id);
   },
   addRoles(data) {
