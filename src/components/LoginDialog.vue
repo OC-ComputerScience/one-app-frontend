@@ -2,9 +2,12 @@
 import { onMounted } from "vue"
 import { ref, computed } from "vue"
 import { useRouter } from "vue-router"
-import UserServices from "../services/UserServices";
+import UserServices from "../services/UserServices"
+import RoleServices from "../services/RoleServices"
+import Utils from "../config/utils.js"
 
 const emit = defineEmits(['closeDialog'])
+const router = useRouter()
 
 const login = ref(true)
 const validForm = ref(false)
@@ -30,25 +33,15 @@ const changeLogin = () => {
 }
 
 const signIn = async() => {
-    if(login.value){
-        await loginUser()
-    }
-    else {
-        await createUser()
-    }
-}
-
-const loginUser = async() => {
     try{
-        await UserServices.loginUser(user.value)
-    }
-    catch(err){
-        console.error(err)
-    }}
-
-const createUser = async() => {
-    try{
-        await UserServices.addUser(user.value)
+        let response = login.value ? await UserServices.loginUser(user.value) : await UserServices.createUser(user.value)
+        let loginUser = response.data
+        Utils.setStore("user", loginUser)
+        let role = await RoleServices.getRoleById(loginUser.roleId)
+        loginUser.role = role.data.type
+        Utils.removeItem("user")
+        Utils.setStore("user", loginUser)
+        router.push({name: "home"})
     }
     catch(err){
         console.error(err)
@@ -130,7 +123,7 @@ const closeDialog = () => {
             elevation="0"
             density="comfortable"
             @click="changeLogin"
-            color="secondary"
+            color="primary"
         >
             {{ changeFormTitle }}
         </v-btn>
