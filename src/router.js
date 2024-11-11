@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import StudentHome from "./views/StudentHome.vue"
 import AdminHome from "./views/AdminHome.vue";
 import UniversityHome from "./views/UniversityHome.vue";
+import Form from "./views/Form.vue";
 import store from "./store/store"
 
 const router = createRouter({
@@ -27,6 +28,11 @@ const router = createRouter({
       path: "/adminHome",
       name: "adminHome",
       component: AdminHome
+    },
+    {
+      path: "/editForm",
+      name: "editForm",
+      component: Form
     },
     {
       path: "/studentHome",
