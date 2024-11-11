@@ -37,38 +37,40 @@ onMounted(() => {
 
 <template>
 <div>
-    <v-tabs
-        v-model="activePage"
-        color="primary"
-        direction="vertical"
-        @update:modelValue="changeActivePage"
-    >
-        <v-tab 
-            v-for="page in props.pages"
-            :key="page.id"
-            :text="page.title"
-            :value="page"
-        ></v-tab>
-    </v-tabs>
-    <div class="ml-2 mt-4">
-        <v-btn 
-            v-if="!createNew"
-            density="comfortable"
-            icon="mdi-plus" 
+    <v-navigation-drawer>
+        <v-tabs
+            v-model="activePage"
             color="primary"
-            @click="() => { createNew = true }"
-        ></v-btn>
-        <v-text-field
-            v-if="createNew"
-            v-model="newPage.title"
-            density="compact"
-            variant="outlined"
-            label="Page Name"
-            @keyup.enter="addNewPage"
-            v-on:blur="() => { createNew = false }"
-        ></v-text-field>
-    </div>
-    
+            direction="vertical"
+            @update:modelValue="changeActivePage"
+        >
+            <v-tab 
+                v-for="page in props.pages"
+                :key="page.id"
+                :text="page.title"
+                :value="page"
+            ></v-tab>
+        </v-tabs>
+        <div class="ml-2">
+            <v-btn 
+                v-if="!createNew"
+                density="comfortable"
+                icon="mdi-plus" 
+                color="primary"
+                @click="() => { createNew = true }"
+                class="ml-1"
+            ></v-btn>
+            <v-text-field
+                v-if="createNew"
+                v-model="newPage.title"
+                density="compact"
+                variant="outlined"
+                label="Page Name"
+                v-on:blur="addNewPage"
+                class="mr-2"
+            ></v-text-field>
+        </div>
+    </v-navigation-drawer>
 </div>
 
 </template>

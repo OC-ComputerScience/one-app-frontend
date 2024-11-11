@@ -12,46 +12,45 @@ const changeActivePage = (newActivePage) => {
     activePage.value = newActivePage
 }
 
+const updatePageSequence = async(newIndex, oldIndex) => {
+    pages.value.splice(newIndex, 0, pages.value.splice(oldIndex, 1)[0]);
+    pages.value.forEach((page, i) => {
+        page.pageSequence = i;
+    });
+    try {
+        await Promise.all(pages.value.map(page => PageServices.updatePages(page)));
+    } catch (err) {
+        console.error(err);
+    }
+};
+
 onMounted(async() => {
     try{
         const response = await PageServices.getPages()
         pages.value = response.data
+        pages.value.sort((a, b) => { return a.pageSequence - b.pageSequence })
         activePage.value = pages.value[0]
         dataLoaded.value = true
     }
     catch(err) {
         console.error(err)
     }
-    
 })
 </script>
 
 <template>
 <div>
-    <v-row>
-    <v-col cols="12">
-        <v-toolbar color="#FFFFFF">
-        <v-toolbar-title> Edit Form </v-toolbar-title>
-        <v-spacer></v-spacer>
-        </v-toolbar>
-        <v-divider style="height: 3px"></v-divider>
-    </v-col>
-    </v-row>
-    <v-row class="mt-n6">
-    <v-col cols="12" md="2">
-        <Pages 
-            v-if="dataLoaded"
-            :pages="pages" 
-            :activePage="activePage"
-            @change-active-page="changeActivePage"    
-        />
-    </v-col>
-    <v-col cols="12" md="10">
-        <PageView 
-            :page="activePage"
-        />
-    </v-col>
-    </v-row>
+    <Pages 
+        v-if="dataLoaded"
+        :pages="pages" 
+        :activePage="activePage"
+        @change-active-page="changeActivePage"    
+    />
+    <PageView 
+        :page="activePage"
+        :num-pages="pages.length"
+        @update-page-sequence="updatePageSequence"
+    />
 </div>
 
 </template>
