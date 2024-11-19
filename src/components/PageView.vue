@@ -19,11 +19,9 @@ const pageSequences = computed(() => {
 })
 
 const updatePage = async() => {
+    editingTitle.value = false
     if(!pageValueChanged.value) {
         return
-    }
-    if(editingTitle.value){
-        editingTitle.value = false
     }
 
     const newPageValues = {
@@ -54,46 +52,43 @@ onUpdated(() => {
 <template>
 <div>
     <v-toolbar color="#FFFFFF">
-        <v-row style="margin-left: 2px">
-            <v-col class="mt-n5" cols="12" md="3" v-if="!editingTitle">
-                <v-row>
-                    <v-col cols="12" md="2">
+            <v-row v-if="!editingTitle">
+                <v-col cols="12" md="6">
+                    <v-toolbar-title class="ml-4"> 
                         <v-btn
                             icon="mdi-pencil"
-                            color="secondary"
+                            color="icons"
                             @click="() => { editingTitle = true }"
                         ></v-btn>
-                    </v-col>
-                    <v-col cols="12" md="10" class="mt-3 ml-n4">
-                        <v-toolbar-title > {{ props.page.title }} </v-toolbar-title>
-                    </v-col>
-                </v-row>
-            </v-col>
-            <v-col v-if="editingTitle" cols="12" md="4">
-                <v-text-field 
-                    class="mt-4 ml-2"
-                    v-model="props.page.title"
-                    label="Page Title"
-                    variant="outlined"  
-                    density="compact"
-                    v-on:blur="() => { editingTitle = false }"
-                    @update:modelValue="() => { pageValueChanged = true }"
-                ></v-text-field>
-            </v-col>
-            
-            <v-spacer></v-spacer>
-
-            <v-col cols="12" md="2" v-if="!editingTitle">
-                <v-btn 
-                    variant="outlined"
-                    elevation="0"
-                    density="comfortable"
-                    @click="() => { confirmDelete = true }"
-                    color="accent"
-                >Delete Page</v-btn>
-            </v-col>
-        </v-row>
-    </v-toolbar>
+                        {{ props.page.title }} 
+                    </v-toolbar-title>
+                </v-col>
+                <v-spacer></v-spacer>
+                <v-col cols="12" md="2" align="right">
+                    <v-btn 
+                        class="mt-2 mr-7"
+                        variant="outlined"
+                        elevation="0"
+                        density="comfortable"
+                        @click="() => { confirmDelete = true }"
+                        color="accent"
+                    >Delete Page</v-btn>
+                </v-col>
+            </v-row>
+            <v-row v-if="editingTitle">
+                <v-col cols="12" md="4">
+                    <v-text-field 
+                        class="ml-4 mt-6"
+                        v-model="props.page.title"
+                        variant="outlined"
+                        label="Group Title"
+                        density="compact"
+                        v-on:blur="updatePage"
+                        @update:modelValue="() => { pageValueChanged = true }"
+                    ></v-text-field>
+                </v-col>
+            </v-row>
+        </v-toolbar>
 
     <div class="mt-4">
         <v-row class="ml-4 mr-4">

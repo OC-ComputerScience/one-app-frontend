@@ -7,6 +7,9 @@ export default {
   getFieldValues(id) {
     return apiClient.get("fieldValues/" + id);
   },
+  getFieldValuesByField(fieldId) {
+    return apiClient.get("fieldValues/field/" + fieldId);
+  },
   addFieldValues(data) {
     return apiClient.post("fieldValues", data);
   },
