@@ -8,21 +8,27 @@ const emit = defineEmits(['changeActivePage'])
 const activePage = ref({})
 const newPage = ref({})
 const createNew = ref(false)
+const snackbar = ref(false)
+const snackbarText = ref('')
 
 const addNewPage = async () => {
     newPage.value.pageSequence = props.pages.length
     newPage.value.text = ""
+    newPage.value.pageGroups = []
     props.pages.push(newPage.value)
     createNew.value = false
-    try{
-        await PageServices.addPages(newPage.value)
-    }
-    catch(err){
+    try {
+        let response = await PageServices.addPages(newPage.value)
+        newPage.value.id = response.data.id
+        snackbarText.value = 'Page Added Successfully'
+    } catch (err) {
         console.error(err)
-    }
-    finally{
+        snackbarText.value = 'Failed to add page'
+    } finally {
         activePage.value = props.pages[props.pages.length - 1]
         newPage.value = {}
+        snackbar.value = true
+        emit('changeActivePage', activePage.value)
     }
 }
 
@@ -72,5 +78,15 @@ onMounted(() => {
         </div>
     </v-navigation-drawer>
 </div>
-
+<v-snackbar v-model="snackbar" :timeout="2000">
+    {{ snackbarText }}
+    <template v-slot:actions>
+        <v-icon 
+            color="accent"
+            icon="mdi-close"
+            variant="text" 
+            @click="snackbar = false"
+        ></v-icon>
+    </template>
+</v-snackbar>
 </template>

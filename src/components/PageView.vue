@@ -1,14 +1,18 @@
 <script setup>
 import { ref, computed, onUpdated } from "vue"
-import PageServices from "../services/PageServices";
+import PageServices from "../services/PageServices"
+import ConfirmDelete from "./ConfirmDelete.vue"
+
 
 const props = defineProps(['page', 'numPages'])
-const emit = defineEmits(['updatePageSequence'])
+const emit = defineEmits(['updatePageSequence', 'deletePage'])
 
 const editingTitle = ref(false)
 const confirmDelete = ref(false)
 const pageValueChanged = ref(false)
 const currentPageSequence = ref(null)
+const snackbar = ref(false)
+const snackbarText = ref('')
 
 const pageSequences = computed(() => {
     let sequences = []
@@ -32,9 +36,28 @@ const updatePage = async() => {
     }
     try{
         await PageServices.updatePages(newPageValues)
+        snackbarText.value = 'Page Updated Successfully'
     }
     catch(err) {
         console.error(err)
+        snackbarText.value = 'Failed to update page'
+    }
+    finally{
+        snackbar.value = true
+    }
+}
+
+const deletePage = async() => {
+    try{
+        console.log(props.page)
+        await PageServices.deletePages(props.page.id)
+        emit('deletePage', props.page)
+    }
+    catch(err) {
+        console.error(err)
+    }
+    finally{
+        confirmDelete.value = false
     }
 }
 
@@ -115,4 +138,23 @@ onUpdated(() => {
         </v-row>
     </div>
 </div>
+<v-dialog v-model="confirmDelete" width="400">
+    <ConfirmDelete 
+        :titleToDelete="props.page.title"
+        @close-dialog="() => { confirmDelete = false }"
+        @confirm-delete="deletePage"
+    />
+</v-dialog>
+
+<v-snackbar v-model="snackbar" :timeout="2000">
+    {{ snackbarText }}
+    <template v-slot:actions>
+        <v-icon 
+            color="accent"
+            icon="mdi-close"
+            variant="text" 
+            @click="snackbar = false"
+        ></v-icon>
+    </template>
+</v-snackbar>
 </template>

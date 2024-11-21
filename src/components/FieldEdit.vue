@@ -45,8 +45,8 @@ const addFieldValue = () => {
 }
 
 const saveField = async () => {
+    let response
     try{
-        let response
         if(editMode.value) {
             await FieldServices.updateFields(props.field)
             response = { data: props.field }
@@ -57,10 +57,12 @@ const saveField = async () => {
         if(fieldValues.value.length > 0){
             await saveFieldValues(response.data.id)
         }
-        emits('saveField', response.data)
     }
     catch(err){
         console.error(err)
+    }
+    finally{
+        emits('saveField', response.data)
     }
 }
 

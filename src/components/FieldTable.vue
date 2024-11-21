@@ -1,9 +1,14 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUpdated } from 'vue';
 import FieldPageGroupServices from '../services/FieldPageGroupServices'
+import FieldServices from '../services/FieldServices'
+import ConfirmDelete from './ConfirmDelete.vue'
 
 const props = defineProps(["fields"])
 const emit = defineEmits(["editField"])
+const snackbar = ref(false)
+const snackbarText = ref('')
+
 const headers = [
   { text: 'Field Name', value: 'name' },
   { text: 'Field Type', value: 'type' },
@@ -11,11 +16,18 @@ const headers = [
 ];
 
 const items = ref([]);
+const selectedItem = ref(null);
+const confirmDelete = ref(false)
 
 onMounted(() => {
   items.value = props.fields;
   items.value.sort((a, b) => a.sequenceNumber - b.sequenceNumber);
-});
+})
+
+onUpdated(() => {
+  items.value = props.fields;
+  items.value.sort((a, b) => a.sequenceNumber - b.sequenceNumber);
+})
 
 let timer
 
@@ -47,8 +59,25 @@ const updateFieldOrder = () => {
   })
 }
 
-const deleteField = (item) => {
+const openDeleteDialog = (item) => {
+  selectedItem.value = item
+  confirmDelete.value = true
+}
 
+const deleteField = async() => {
+  items.value.splice(items.value.indexOf(selectedItem.value), 1)
+  try{
+    await FieldServices.deleteFields(selectedItem.value.fieldId)
+    await FieldPageGroupServices.deleteFieldPageGroups(selectedItem.value.id)
+    updateFieldOrder()
+    await updateAllFields()
+  }
+  catch(err){
+    console.error(err)
+  }
+  finally{
+    confirmDelete.value = false
+  }
 }
 
 const updateAllFields = async() => {
@@ -63,13 +92,16 @@ const updateAllFields = async() => {
       }
       return FieldPageGroupServices.updateFieldPageGroups(fieldPageGroup)
     }))
+    snackbarText.value = 'Fields Updated Successfully'
   }
   catch(err){
     console.error(err)
+    snackbarText.value = 'Failed to update fields'
+  }
+  finally{
+    snackbar.value = true
   }
 }
-
-// Fetch or manage items as needed
 </script>
 
 <template>
@@ -101,7 +133,7 @@ const updateAllFields = async() => {
             <v-icon 
               icon="mdi-delete" 
               class="mr-2"
-              @click="deleteField(item)"  
+              @click="openDeleteDialog(item)"  
             ></v-icon>
             <v-icon 
               v-if="items.indexOf(item) > 0"
@@ -119,6 +151,25 @@ const updateAllFields = async() => {
       </tbody>
     </v-table>
   </v-card>
+  <v-dialog v-model="confirmDelete" width="400">
+    <ConfirmDelete 
+      :titleToDelete="selectedItem.field.name"
+      @close-dialog="() => { confirmDelete = false }"
+      @confirm-delete="deleteField"
+    />
+  </v-dialog>
+
+  <v-snackbar v-model="snackbar" :timeout="2000">
+    {{ snackbarText }}
+    <template v-slot:actions>
+      <v-icon 
+        color="accent"
+        icon="mdi-close"
+        variant="text" 
+        @click="snackbar = false"
+      ></v-icon>
+    </template>
+  </v-snackbar>
 </template>
 
 <style scoped>

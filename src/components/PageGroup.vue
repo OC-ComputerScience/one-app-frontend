@@ -3,15 +3,19 @@ import { ref, computed, onMounted, onUpdated } from "vue"
 import PageGroupServices from "../services/PageGroupServices"
 import FieldTable from "./FieldTable.vue"
 import FieldEdit from "./FieldEdit.vue"
-import FieldPageGroupServices from "../services/FieldPageGroupServices";
+import FieldPageGroupServices from "../services/FieldPageGroupServices"
+import ConfirmDelete from "./ConfirmDelete.vue"
 
 const props = defineProps(['pageGroup', 'numGroups'])
+const emits = defineEmits(['updateGroupSequence', 'deleteGroup'])
 const editingTitle = ref(false)
 const groupValueChanged = ref(false)
 const currentGroupSequence = ref(null)
-const allowMultiple = ref(false)
 const newFieldDialog = ref(false)
+const confirmDelete = ref(false)
 const displayTypes = ref(['Vertical', 'Horizontal'])
+const snackbar = ref(false)
+const snackbarText = ref('')
 const activeField = ref({
     name: '',
     label: '',
@@ -34,13 +38,48 @@ const updateGroup = async() => {
     if(!groupValueChanged.value){
         return
     }
-
     try{
         await PageGroupServices.updatePageGroups(props.pageGroup)
+        snackbarText.value = 'Group Updated Successfully'
     }
     catch(err){
         console.error(err)
+        snackbarText.value = 'Failed to update group'
     }
+    finally{
+        snackbar.value = true
+        groupValueChanged.value = false
+    }
+}
+
+const deleteGroup = async() => {
+    try{
+        await PageGroupServices.deletePageGroups(props.pageGroup.id)
+        emits('deleteGroup', props.pageGroup)
+        snackbarText.value = 'Group Deleted Successfully'
+    }
+    catch(err){
+        console.error(err)
+        snackbarText.value = 'Failed to delete group'
+    }
+    finally{
+        confirmDelete.value = false
+        snackbar.value = true
+    }
+}
+
+const updateGroupSequence = () => {
+    emits('updateGroupSequence', currentGroupSequence.value - 1, props.pageGroup.groupSequence)
+}
+
+let updateTimer = null
+const updateGroupWithDelay = () => {
+    if (updateTimer) {
+        clearTimeout(updateTimer)
+    }
+    updateTimer = setTimeout(() => {
+        updateGroup()
+    }, 2000)
 }
 
 const addNewField = () => {
@@ -78,11 +117,17 @@ const createFieldPageGroup = async(field, pageGroupId) => {
         newFieldPageGroup = response.data
         newFieldPageGroup.field = field
         props.pageGroup.fieldPageGroups.push(newFieldPageGroup)
+        snackbarText.value = 'Field Added Successfully'
     }
     catch(err){
         console.error(err)
+        snackbarText.value = 'Failed to add field'
+    }
+    finally{
+        snackbar.value = true
     }
 }
+
 const closeFieldDialog = () => {
     activeField.value = {
         name: '',
@@ -127,7 +172,7 @@ onUpdated(() => {
                         class="mr-2"
                         icon="mdi-trash-can-outline"
                         color="icons"
-                        @click="() => { editingTitle = true }"
+                        @click="() => { confirmDelete = true }"
                     ></v-btn>
                 </v-col>
             </v-row>
@@ -151,6 +196,7 @@ onUpdated(() => {
                     label="Group Description"
                     variant="outlined"
                     v-model="props.pageGroup.text"
+                    v-on:blur="updateGroup"
                     @update:modelValue="() => { groupValueChanged = true }"
                     counter="255"
                 ></v-textarea>
@@ -160,6 +206,7 @@ onUpdated(() => {
                     v-model="currentGroupSequence"
                     density="compact"
                     :items="groupSequences"
+                    @update:modelValue="updateGroupSequence"
                 ></v-autocomplete>
                 <v-autocomplete
                     label="Display Type"
@@ -167,31 +214,27 @@ onUpdated(() => {
                     v-model="props.pageGroup.displayType"
                     density="compact"
                     :items="displayTypes"
+                    @update:modelValue="updateGroup"
                 ></v-autocomplete>
-                <v-checkbox
-                    class="mt-n4"
-                    label="Allow Multiple"
-                    v-model="allowMultiple"
-                ></v-checkbox>
-                <v-row v-if="allowMultiple">
+                <v-row>
                     <v-col cols="12" md="6">
                         <v-text-field 
-                            class="mt-n4"
                             label="Minimum"
                             variant="outlined"
                             v-model="props.pageGroup.minSetCount"
                             type="number"
                             density="compact"
+                            @update:modelValue="updateGroupWithDelay"
                         ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="6">
                         <v-text-field 
-                            class="mt-n4"
                             label="Maximum"
                             variant="outlined"
                             v-model="props.pageGroup.maxSetCount"
                             type="number"
                             density="compact"
+                            @update:modelValue="updateGroupWithDelay"
                         ></v-text-field>
                     </v-col>
                 </v-row>
@@ -223,4 +266,23 @@ onUpdated(() => {
         @close-dialog="closeFieldDialog"
     />
 </v-dialog>
+<v-dialog v-model="confirmDelete" width="400">
+    <ConfirmDelete 
+        :titleToDelete="props.pageGroup.title"
+        @close-dialog="() => { confirmDelete = false }"
+        @confirm-delete="deleteGroup"
+    />
+</v-dialog>
+
+<v-snackbar v-model="snackbar" :timeout="2000">
+    {{ snackbarText }}
+    <template v-slot:actions>
+        <v-icon 
+            color="accent"
+            icon="mdi-close"
+            variant="text" 
+            @click="snackbar = false"
+        ></v-icon>
+    </template>
+</v-snackbar>
 </template>
