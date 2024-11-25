@@ -133,6 +133,7 @@ const closeNewGroupDialog = () => {
 const saveNewGroup = async (group) => {
     try {
         const response = await PageGroupServices.addPageGroups(group)
+        response.data.fieldPageGroups = []
         activePage.value.pageGroups.push(response.data)
         sortGroups()
         closeNewGroupDialog()
@@ -153,21 +154,20 @@ onMounted(async() => {
 <template>
 <div>
     <Pages 
-        v-if="dataLoaded"
         :pages="pages" 
         :activePage="activePage"
         @change-active-page="changeActivePage"    
     />
     <PageView 
+        v-if="pages.length > 0"
         :page="activePage"
         :num-pages="pages.length"
         :key="pageKey"
         @update-page-sequence="updatePageSequence"
         @delete-page="deletePage"
     />
-    <div v-for="pageGroup in activePage.pageGroups" v-if="dataLoaded" class="mb-4">
+    <div v-for="pageGroup in activePage.pageGroups"  class="mb-4">
         <PageGroup 
-            v-if="dataLoaded"
             :page-group="pageGroup"
             :num-groups="activePage.pageGroups.length"
             @update-group-sequence="updateGroupSequence"

@@ -21,12 +21,16 @@ const confirmDelete = ref(false)
 
 onMounted(() => {
   items.value = props.fields;
-  items.value.sort((a, b) => a.sequenceNumber - b.sequenceNumber);
-})
+  if(items.value){
+    items.value.sort((a, b) => a.sequenceNumber - b.sequenceNumber);
+  }}
+)
 
 onUpdated(() => {
   items.value = props.fields;
-  items.value.sort((a, b) => a.sequenceNumber - b.sequenceNumber);
+  if(items.value){
+    items.value.sort((a, b) => a.sequenceNumber - b.sequenceNumber);
+  }
 })
 
 let timer

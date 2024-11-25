@@ -49,7 +49,6 @@ const updatePage = async() => {
 
 const deletePage = async() => {
     try{
-        console.log(props.page)
         await PageServices.deletePages(props.page.id)
         emit('deletePage', props.page)
     }
@@ -68,7 +67,6 @@ const updatePageSequence = () => {
 onUpdated(() => {
     currentPageSequence.value = props.page.pageSequence + 1
 })
-// TODO - Confirm delete dialog
 
 </script>
 
@@ -76,7 +74,7 @@ onUpdated(() => {
 <div>
     <v-toolbar color="#FFFFFF">
             <v-row v-if="!editingTitle">
-                <v-col cols="12" md="6">
+                <v-col cols="12" md="6" sm="6">
                     <v-toolbar-title class="ml-4"> 
                         <v-btn
                             icon="mdi-pencil"
@@ -86,8 +84,7 @@ onUpdated(() => {
                         {{ props.page.title }} 
                     </v-toolbar-title>
                 </v-col>
-                <v-spacer></v-spacer>
-                <v-col cols="12" md="2" align="right">
+                <v-col cols="12" md="6" sm="6" align="right">
                     <v-btn 
                         class="mt-2 mr-7"
                         variant="outlined"

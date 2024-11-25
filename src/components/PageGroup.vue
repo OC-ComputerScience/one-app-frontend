@@ -33,8 +33,11 @@ const groupSequences = computed(() => {
     return sequences
 })
 
-const updateGroup = async() => {
+const updateGroup = async(changed) => {
     editingTitle.value = false
+    if(changed){
+        groupValueChanged.value = true
+    }
     if(!groupValueChanged.value){
         return
     }
@@ -72,13 +75,26 @@ const updateGroupSequence = () => {
     emits('updateGroupSequence', currentGroupSequence.value - 1, props.pageGroup.groupSequence)
 }
 
+const updateMaxSetCount = () => {
+    if(props.pageGroup.maxSetCount < props.pageGroup.minSetCount){
+        props.pageGroup.maxSetCount = props.pageGroup.minSetCount
+    }
+    else updateGroupWithDelay()
+}
+
+const updateMinSetCount = () => {
+    if(props.pageGroup.minSetCount > props.pageGroup.maxSetCount){
+        props.pageGroup.minSetCount = props.pageGroup.maxSetCount
+    }
+    else updateGroupWithDelay()
+}
 let updateTimer = null
 const updateGroupWithDelay = () => {
     if (updateTimer) {
         clearTimeout(updateTimer)
     }
     updateTimer = setTimeout(() => {
-        updateGroup()
+        updateGroup(true)
     }, 2000)
 }
 
@@ -156,7 +172,7 @@ onUpdated(() => {
     <v-card elevation="1" class="ml-7 mr-7" variant="elevated">
         <v-toolbar>
             <v-row v-if="!editingTitle">
-                <v-col cols="12" md="6">
+                <v-col cols="12" md="6" sm="6">
                     <v-toolbar-title> 
                         <v-btn
                             icon="mdi-pencil"
@@ -166,8 +182,7 @@ onUpdated(() => {
                         {{ props.pageGroup.title }} 
                     </v-toolbar-title>
                 </v-col>
-                <v-spacer></v-spacer>
-                <v-col cols="12" md="1" align="right">
+                <v-col cols="12" md="6" sm="6" align="right">
                     <v-btn
                         class="mr-2"
                         icon="mdi-trash-can-outline"
@@ -184,7 +199,7 @@ onUpdated(() => {
                         variant="outlined"
                         label="Group Title"
                         density="compact"
-                        v-on:blur="updateGroup"
+                        v-on:blur="updateGroup(false)"
                         @update:modelValue="() => { groupValueChanged = true }"
                     ></v-text-field>
                 </v-col>
@@ -196,7 +211,7 @@ onUpdated(() => {
                     label="Group Description"
                     variant="outlined"
                     v-model="props.pageGroup.text"
-                    v-on:blur="updateGroup"
+                    v-on:blur="updateGroup(false)"
                     @update:modelValue="() => { groupValueChanged = true }"
                     counter="255"
                 ></v-textarea>
@@ -214,7 +229,7 @@ onUpdated(() => {
                     v-model="props.pageGroup.displayType"
                     density="compact"
                     :items="displayTypes"
-                    @update:modelValue="updateGroup"
+                    @update:modelValue="updateGroup(true)"
                 ></v-autocomplete>
                 <v-row>
                     <v-col cols="12" md="6">
@@ -224,7 +239,7 @@ onUpdated(() => {
                             v-model="props.pageGroup.minSetCount"
                             type="number"
                             density="compact"
-                            @update:modelValue="updateGroupWithDelay"
+                            @update:modelValue="updateMinSetCount"
                         ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="6">
@@ -234,7 +249,7 @@ onUpdated(() => {
                             v-model="props.pageGroup.maxSetCount"
                             type="number"
                             density="compact"
-                            @update:modelValue="updateGroupWithDelay"
+                            @update:modelValue="updateMaxSetCount"
                         ></v-text-field>
                     </v-col>
                 </v-row>

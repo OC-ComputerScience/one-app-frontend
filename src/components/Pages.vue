@@ -43,7 +43,7 @@ onMounted(() => {
 
 <template>
 <div>
-    <v-navigation-drawer>
+    <v-navigation-drawer permanent>
         <v-tabs
             v-model="activePage"
             color="primary"
@@ -57,7 +57,7 @@ onMounted(() => {
                 :value="page"
             ></v-tab>
         </v-tabs>
-        <div class="ml-2">
+        <div class="ml-2 mt-2">
             <v-btn 
                 v-if="!createNew"
                 density="comfortable"

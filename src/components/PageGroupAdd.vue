@@ -19,6 +19,7 @@ const newGroup = ref({
 const saveGroup = async () => {
     try {
         newGroup.value.groupSequence = props.numGroups
+        newGroup.value.fieldPageGroups = []
         emits('saveGroup', newGroup.value)
         closeDialog()
     } catch (err) {
