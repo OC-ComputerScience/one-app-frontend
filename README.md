@@ -1,13 +1,17 @@
-# Recipe Frontend with Vue 3
+# OneApp Frontend
 
-This application allows users to create and maintain recipes. Please visit https://github.com/OC-ComputerScience/recipe-backend for the backend repository.
+This application allows a student to sign in and complete a college application form and sign up for a list of universities for their application to be sent to. 
+
+Admins of the system can manage the form, adding and removing questions at their leisure.
+
+Universities can see what students have applied, and download their information directly from the application.
 
 ## Project Setup
 
-1. Clone the project into your **XAMPP/xamppfiles/htdocs/recipeapp** directory.
+1. Clone the project into your **XAMPP/xamppfiles/htdocs/oneapp** directory.
 
 ```
-git clone https://github.com/OC-ComputerScience/recipe-frontend.git
+git clone https://github.com/OC-ComputerScience/one-app-frontend.git
 ```
 
 2. Install the project.
@@ -40,3 +44,23 @@ npm run build
 ```
 npm run lint
 ```
+
+## Style Guide
+
+### Colors
+The colors used in this application can be found in ```/src/plugins/vuetify.js```. Generally the colors used will be Primary (#1976D2), Secondary (#575757), and Accent (#FF0000).
+
+#### Buttons
+ - Color:
+   - Confirmation / action buttons should use Primary
+   - Cancel buttons should use Secondary
+   - Deletion buttons should use Accent
+ - Styling
+   - Standalone buttons should be ```variant="outlined"```
+   - Dialog buttons should be ```variant="plain"```
+   - All buttons should use ```density="comfortable"```
+
+#### Text Fields / Comboboxes / Autocompletes
+ - Styling
+   - All should use ```variant="outlined"```
+   - All should use ```density="compact"```

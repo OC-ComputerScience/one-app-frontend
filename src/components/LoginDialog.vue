@@ -34,7 +34,7 @@ const changeLogin = () => {
 
 const signIn = async() => {
     try{
-        let response = login.value ? await UserServices.loginUser(user.value) : await UserServices.createUser(user.value)
+        let response = login.value ? await UserServices.loginUser(user.value) : await UserServices.addUser(user.value)
         let loginUser = response.data
         Utils.setStore("user", loginUser)
         let role = await RoleServices.getRoleById(loginUser.roleId)

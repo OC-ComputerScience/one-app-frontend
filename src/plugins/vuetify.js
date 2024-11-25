@@ -12,8 +12,9 @@ const baseTheme = {
   dark: false,
   colors: {
     primary: "#1976D2",
-    secondary: "#575757",
+    secondary: "#D9D9D9",
     accent: "#FF0000",
+    icons: "#575757",
     success: "#47121D",
     error: "#EE5044",
     teal: "#63BAC0",
