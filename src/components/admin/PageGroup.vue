@@ -1,10 +1,10 @@
 <script setup>
 import { ref, computed, onMounted, onUpdated } from "vue"
-import PageGroupServices from "../services/PageGroupServices"
+import PageGroupServices from "../../services/PageGroupServices"
 import FieldTable from "./FieldTable.vue"
 import FieldEdit from "./FieldEdit.vue"
-import FieldPageGroupServices from "../services/FieldPageGroupServices"
-import ConfirmDelete from "./ConfirmDelete.vue"
+import FieldPageGroupServices from "../../services/FieldPageGroupServices"
+import ConfirmDelete from "../ConfirmDelete.vue"
 
 const props = defineProps(['pageGroup', 'numGroups'])
 const emits = defineEmits(['updateGroupSequence', 'deleteGroup'])

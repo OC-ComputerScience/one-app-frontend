@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onUpdated } from "vue"
-import PageServices from "../services/PageServices"
-import ConfirmDelete from "./ConfirmDelete.vue"
+import PageServices from "../../services/PageServices"
+import ConfirmDelete from "../ConfirmDelete.vue"
 
 
 const props = defineProps(['page', 'numPages'])

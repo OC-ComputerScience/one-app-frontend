@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from "vue"
-import FieldServices from "../services/FieldServices"
-import FieldValueServices from "../services/FieldValueServices"
+import FieldServices from "../../services/FieldServices"
+import FieldValueServices from "../../services/FieldValueServices"
 
 const props = defineProps(['field'])
 const emits = defineEmits(['closeDialog', 'saveField'])

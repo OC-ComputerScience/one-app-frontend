@@ -3,6 +3,7 @@ import StudentHome from "./views/StudentHome.vue"
 import AdminHome from "./views/AdminHome.vue";
 import UniversityHome from "./views/UniversityHome.vue";
 import Form from "./views/Form.vue";
+import StudentApplication from "./views/StudentApplication.vue";
 import store from "./store/store"
 
 const router = createRouter({
@@ -38,6 +39,11 @@ const router = createRouter({
       path: "/studentHome",
       name: "studentHome",
       component: StudentHome
+    },
+    {
+      path: "/application",
+      name: "application",
+      component: StudentApplication
     },
     {
       path: "/universityHome",
