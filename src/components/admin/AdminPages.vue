@@ -1,6 +1,6 @@
 <script setup>
-import { ref, onMounted } from "vue"
-import PageServices from "../services/PageServices"
+import { ref, onMounted, onUpdated } from "vue"
+import PageServices from "../../services/PageServices"
 
 const props = defineProps(['pages', 'activePage'])
 const emit = defineEmits(['changeActivePage'])
@@ -37,6 +37,10 @@ const changeActivePage = () => {
 }
 
 onMounted(() => {
+    activePage.value = props.activePage
+})
+
+onUpdated(() => {
     activePage.value = props.activePage
 })
 </script>

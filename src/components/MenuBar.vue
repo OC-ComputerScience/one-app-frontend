@@ -49,6 +49,9 @@ function logout() {
           <v-btn class="mx-2" > Students </v-btn>
           <v-btn class="mx-2" > Universities </v-btn>
         </div>
+        <div v-else-if="user.role === 'Student'">
+          <v-btn class="mx-2" :to="{ name: 'application' }"> Application </v-btn>
+        </div>
       </div>
       
       <!-- <v-btn class="mx-2" :to="{ name: 'recipes' }"> Recipes </v-btn> -->

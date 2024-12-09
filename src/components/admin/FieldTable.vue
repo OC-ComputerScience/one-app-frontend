@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted, onUpdated } from 'vue';
-import FieldPageGroupServices from '../services/FieldPageGroupServices'
-import FieldServices from '../services/FieldServices'
-import ConfirmDelete from './ConfirmDelete.vue'
+import FieldPageGroupServices from '../../services/FieldPageGroupServices'
+import FieldServices from '../../services/FieldServices'
+import ConfirmDelete from '../ConfirmDelete.vue'
 
 const props = defineProps(["fields"])
 const emit = defineEmits(["editField"])

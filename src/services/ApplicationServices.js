@@ -4,8 +4,11 @@ export default {
   getApplications() {
     return apiClient.get("applications");
   },
-  getApplications(id) {
-    return apiClient.get("applications/" + id);
+  getApplications(userId) {
+    return apiClient.get("applications/" + userId);
+  },
+  getApplicationsByUserId(id) {
+    return apiClient.get("applications/user/" + id);
   },
   addApplications(data) {
     return apiClient.post("applications", data);

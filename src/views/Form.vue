@@ -1,11 +1,11 @@
 <script setup>
 import { ref, onMounted } from "vue"
 import PageServices from "../services/PageServices"
-import Pages from "../components/Pages.vue"
-import PageView from "../components/PageView.vue"
-import PageGroup from "../components/PageGroup.vue"
+import Pages from "../components/admin/AdminPages.vue"
+import PageView from "../components/admin/PageView.vue"
+import PageGroup from "../components/admin/PageGroup.vue"
 import PageGroupServices from "../services/PageGroupServices"
-import PageGroupAdd from "../components/PageGroupAdd.vue"
+import PageGroupAdd from "../components/admin/PageGroupAdd.vue"
 
 const pages = ref([])
 const activePage = ref({})
