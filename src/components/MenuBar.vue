@@ -3,11 +3,12 @@ import ocLogo from "/oc_logo.png";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import UserServices from "../services/UserServices";
+import Utils from "../config/utils";
 
 const router = useRouter();
 
 const user = ref(null);
-const title = ref("Recipes");
+const title = ref("OneApp");
 const logoURL = ref("");
 
 onMounted(() => {
@@ -24,6 +25,7 @@ function logout() {
       console.log(error);
     });
   localStorage.removeItem("user");
+  Utils.removeItem("user")
   user.value = null;
   router.push({ name: "login" });
 }
@@ -31,8 +33,8 @@ function logout() {
 
 <template>
   <div>
-    <v-app-bar color="primary" app dark>
-      <router-link :to="{ name: 'recipes' }">
+    <v-app-bar app color="primary">
+      <router-link :to="{ name: 'home' }">
         <v-img
           class="mx-2"
           :src="logoURL"
@@ -41,17 +43,23 @@ function logout() {
           contain
         ></v-img>
       </router-link>
-      <v-toolbar-title class="title">
-        {{ title }}
-      </v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn class="mx-2" :to="{ name: 'recipes' }"> Recipes </v-btn>
-      <v-btn v-if="user === null" class="mx-2" :to="{ name: 'login' }">
-        Login
-      </v-btn>
-      <v-btn v-if="user !== null" class="mx-2" :to="{ name: 'ingredients' }">
+      <div v-if="user">
+        <div v-if="user.role === 'Admin'">
+          <v-btn class="mx-2" :to="{ name: 'editForm' }"> Form </v-btn>
+          <v-btn class="mx-2" > Students </v-btn>
+          <v-btn class="mx-2" > Universities </v-btn>
+        </div>
+        <div v-else-if="user.role === 'Student'">
+          <v-btn class="mx-2" :to="{ name: 'application' }"> Application </v-btn>
+        </div>
+      </div>
+      
+      <!-- <v-btn class="mx-2" :to="{ name: 'recipes' }"> Recipes </v-btn> -->
+      
+      <!-- <v-btn v-if="user !== null" class="mx-2" :to="{ name: 'ingredients' }">
         Ingredients
-      </v-btn>
+      </v-btn> -->
+      <v-spacer></v-spacer>
       <v-menu v-if="user !== null" min-width="200px" rounded>
         <template v-slot:activator="{ props }">
           <v-btn icon v-bind="props">

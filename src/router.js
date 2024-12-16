@@ -1,4 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
+import StudentHome from "./views/StudentHome.vue"
+import AdminHome from "./views/AdminHome.vue";
+import UniversityHome from "./views/UniversityHome.vue";
+import Form from "./views/Form.vue";
+import StudentApplication from "./views/StudentApplication.vue";
+import store from "./store/store"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,21 +15,41 @@ const router = createRouter({
       component: () => import("./views/Login.vue"),
     },
     {
-      path: "/recipes",
-      name: "recipes",
-      component: () => import("./views/RecipeList.vue"),
+      path: "/home",
+      name: "home",
+      beforeEnter: (to, from, next) => {
+        let user = store.getters.getUser
+        if(!store.getters.isAuthenticated) next("/")
+        else if(user.role === "Admin") next("/adminHome")
+        else if(user.role === "Student") next("/studentHome")
+        else if(user.role === "University") next("/universityHome")
+      }
     },
     {
-      path: "/recipe/:id",
-      name: "editRecipe",
-      props: true,
-      component: () => import("./views/EditRecipe.vue"),
+      path: "/adminHome",
+      name: "adminHome",
+      component: AdminHome
     },
     {
-      path: "/ingredients",
-      name: "ingredients",
-      component: () => import("./views/IngredientList.vue"),
+      path: "/editForm",
+      name: "editForm",
+      component: Form
     },
+    {
+      path: "/studentHome",
+      name: "studentHome",
+      component: StudentHome
+    },
+    {
+      path: "/application",
+      name: "application",
+      component: StudentApplication
+    },
+    {
+      path: "/universityHome",
+      name: "universityHome",
+      component: UniversityHome
+    }
   ],
 });
 
