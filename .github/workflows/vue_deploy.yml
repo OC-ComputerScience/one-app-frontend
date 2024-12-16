@@ -5,7 +5,7 @@ on:
   pull_request:
     types: [closed]
     branches:
-      - dev
+      - main
 
 jobs:
   aws-deploy:
@@ -13,14 +13,14 @@ jobs:
     #For google auth
 
     steps:
-      - uses: actions/checkout@v2
-        # may need to change to version 3
+      - uses: actions/checkout@v3
+
         with:
-          ref: dev
-      - uses: actions/setup-node@v3
-        #May need to change to version 18
+          ref: main
+      - uses: actions/setup-node@v4
+
         with:
-          node-version: 16
+          node-version: 20.11.0
 
       - run: npm install
       - run: npm run build
@@ -29,8 +29,8 @@ jobs:
         uses: easingthemes/ssh-deploy@v2.1.1
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: ${{ secrets.TARGET }}
           ARGS: "-rltgoDzvO --delete"
           SOURCE: "dist/"
-          REMOTE_HOST: "recipe.eaglesoftwareteam.com"
-          REMOTE_USER: ubuntu
-          TARGET: "/var/www/html/recipe-frontend"
