@@ -1,5 +1,5 @@
 <script setup>
-import ocLogo from "/oc_logo.png";
+import logo from "/chef.png";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import UserServices from "../services/UserServices";
@@ -12,7 +12,7 @@ const title = ref("OneApp");
 const logoURL = ref("");
 
 onMounted(() => {
-  logoURL.value = ocLogo;
+  logoURL.value = logo;
   user.value = JSON.parse(localStorage.getItem("user"));
 });
 
@@ -25,7 +25,7 @@ function logout() {
       console.log(error);
     });
   localStorage.removeItem("user");
-  Utils.removeItem("user")
+  Utils.removeItem("user");
   user.value = null;
   router.push({ name: "login" });
 }
@@ -38,24 +38,26 @@ function logout() {
         <v-img
           class="mx-2"
           :src="logoURL"
-          height="50"
-          width="50"
+          height="100"
+          width="100"
           contain
         ></v-img>
       </router-link>
       <div v-if="user">
         <div v-if="user.role === 'Admin'">
           <v-btn class="mx-2" :to="{ name: 'editForm' }"> Form </v-btn>
-          <v-btn class="mx-2" > Students </v-btn>
-          <v-btn class="mx-2" > Universities </v-btn>
+          <v-btn class="mx-2"> Students </v-btn>
+          <v-btn class="mx-2"> Universities </v-btn>
         </div>
         <div v-else-if="user.role === 'Student'">
-          <v-btn class="mx-2" :to="{ name: 'application' }"> Application </v-btn>
+          <v-btn class="mx-2" :to="{ name: 'application' }">
+            Application
+          </v-btn>
         </div>
       </div>
-      
+
       <!-- <v-btn class="mx-2" :to="{ name: 'recipes' }"> Recipes </v-btn> -->
-      
+
       <!-- <v-btn v-if="user !== null" class="mx-2" :to="{ name: 'ingredients' }">
         Ingredients
       </v-btn> -->
