@@ -53,10 +53,11 @@ const signIn = async () => {
       loginUser.role = role.data.type;
       Utils.removeItem("user");
       Utils.setStore("user", loginUser);
+
       router.push({ name: "home" });
     } catch (err) {
-      errorMessage.value = err.response.data.message;
       console.error(err);
+      errorMessage.value = err.response.data.message;
     }
   } else {
     try {
@@ -72,8 +73,8 @@ const signIn = async () => {
           router.push({ name: "home" });
         })
         .catch((error) => {
-          errorMessage.value = err.response.data.message;
           console.log(error);
+          errorMessage.value = err.response.data.message;
         });
     } catch (err) {
       errorMessage.value = err.response.data.message;
