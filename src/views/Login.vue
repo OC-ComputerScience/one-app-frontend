@@ -62,9 +62,6 @@ const changeSignupState = () => {
       </v-row>
     </v-container>
 
-    <v-dialog v-model="showLogin" max-width="600px">
-      <LoginDialog :displayLoginFirst="true" @close-dialog="changeLoginState" />
-    </v-dialog>
     <v-dialog v-model="showSignup" max-width="600px">
       <LoginDialog
         :displayLoginFirst="false"
