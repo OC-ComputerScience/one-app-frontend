@@ -1,19 +1,19 @@
 import apiClient from "./services";
 
 export default {
-  getUniversities() {
+  getAllUniversities() {
     return apiClient.get("universities");
   },
-  getUniversities(id) {
+  getUniversity(id) {
     return apiClient.get("universities/" + id);
   },
-  addUniversities(data) {
+  addUniversity(data) {
     return apiClient.post("universities", data);
   },
-  updateUniversities(data) {
+  updateUniversity(data) {
     return apiClient.put("universities/" + data.id, data);
   },
-  deleteUniversities(id) {
+  deleteUniversity(id) {
     return apiClient.delete("universities/" + id);
   },
 };
