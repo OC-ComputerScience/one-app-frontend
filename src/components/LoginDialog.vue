@@ -37,10 +37,6 @@ const rules = {
     user.value.password === value || "Password does not match",
 };
 
-const changeLogin = () => {
-  login.value = !login.value;
-};
-
 const signIn = async () => {
   errorMessage.value = "";
   Utils.removeItem("user");
