@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import StudentHome from "./views/StudentHome.vue"
 import AdminHome from "./views/AdminHome.vue";
 import UniversityHome from "./views/UniversityHome.vue";
+import UniversityList from "./views/UniversityList.vue";
 import UserList from "./views/UserList.vue";
 import Form from "./views/Form.vue";
 import StudentApplication from "./views/StudentApplication.vue";
@@ -50,6 +51,11 @@ const router = createRouter({
       path: "/universityHome",
       name: "universityHome",
       component: UniversityHome
+    },
+    {
+      path: "/universityList",
+      name: "universityList",
+      component: UniversityList
     },
     {
       path: "/userList",
