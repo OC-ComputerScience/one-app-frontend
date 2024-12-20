@@ -1,7 +1,7 @@
 import apiClient from "./services";
 
 export default {
-  getRoles() {
+  getAllRoles() {
     return apiClient.get("roles");
   },
   getRoleById(id) {
