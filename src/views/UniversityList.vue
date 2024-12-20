@@ -2,32 +2,41 @@
 import UniversityServices from "../services/UniversityServices";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-
+import UniversityDiaglog from "../components/UniversityDialog.vue";
 const router = useRouter();
-const universitys = ref([]);
+const universities = ref([]);
 
 const message = ref("Add, Update and Delete Universities");
 
-const updateUniversity = (university) => {
-  university.roleId = university.role.type.id;
-  console.log(university);
-  UniversityServices.updateUniversity(university);
+const showUnivDialog = ref(false);
+const university = ref({});
+
+const editUniversity = (univ) => {
+  university.value = univ;
+  showUnivDialog.value = true;
 };
-const deleteUniversity = (university) => {
-  UniversityServices.deleteUniversity(university.id)
-    //add deleting all university data
+const deleteUniversity = (univ) => {
+  UniversityServices.deleteUniversity(univ.id)
     .then(() => {
-      retrieveUniversitys();
+      retrieveUniversities();
     })
     .catch((e) => {
       message.value = e.response.data.message;
     });
 };
+const closeDialog = () => {
+  showUnivDialog.value = false;
+};
+
+const addUniversity = () => {
+  showUnivDialog.value = true;
+  university.value = null;
+};
 
 const retrieveUniversities = () => {
   UniversityServices.getAllUniversities()
     .then((response) => {
-      universitys.value = response.data;
+      universities.value = response.data;
     })
     .catch((e) => {
       message.value = e.response.data.message;
@@ -41,10 +50,14 @@ retrieveUniversities();
   <div>
     <v-container>
       <v-card>
-        <v-card-title> Universitys </v-card-title>
+        <v-card-title> Universities </v-card-title>
         <v-card-text>
           <b>{{ message }}</b>
         </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue" @click="addUniversity">Add University</v-btn>
+        </v-card-actions>
         <v-table>
           <thead>
             <tr>
@@ -58,7 +71,10 @@ retrieveUniversities();
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(university, index) in universitys" :key="university.id">
+            <tr
+              v-for="(university, index) in universities"
+              :key="university.id"
+            >
               <td>{{ university.name }}</td>
               <td>{{ university.abrev }}</td>
               <td>{{ university.city }}</td>
@@ -67,20 +83,16 @@ retrieveUniversities();
               <td>{{ university.relationship }}</td>
               <td>{{ university.status }}</td>
               <td>
-                <v-btn
-                  @click="updateUniversity(university)"
-                  color="primary"
-                  class="mr-4"
-                >
+                <v-icon small class="mx-4" @click="editUniversity(university)">
                   mdi-pencil
-                </v-btn>
-                <v-btn
+                </v-icon>
+                <v-icon
+                  small
+                  class="mx-4"
                   @click="deleteUniversity(university)"
-                  color="error"
-                  class="mr-4"
                 >
-                  mdi-trash
-                </v-btn>
+                  mdi-delete
+                </v-icon>
               </td>
             </tr>
           </tbody>
@@ -88,4 +100,11 @@ retrieveUniversities();
       </v-card>
     </v-container>
   </div>
+  <v-dialog v-model="showUnivDialog" max-width="600px">
+    <UniversityDiaglog
+      :universityData="university"
+      @close-dialog="closeDialog"
+      @updateList="retrieveUniversities"
+    />
+  </v-dialog>
 </template>
