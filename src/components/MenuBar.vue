@@ -4,6 +4,7 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import UserServices from "../services/UserServices";
 import Utils from "../config/utils";
+import store from "../store/store";
 
 const router = useRouter();
 
@@ -24,9 +25,10 @@ function logout() {
     .catch((error) => {
       console.log(error);
     });
-  localStorage.removeItem("user");
+
   Utils.removeItem("user");
   user.value = null;
+  store.commit("setLoginUser", null);
   router.push({ name: "login" });
 }
 </script>
@@ -47,7 +49,9 @@ function logout() {
         <div v-if="user.role === 'Admin'">
           <v-btn class="mx-2" :to="{ name: 'editForm' }"> Form </v-btn>
           <v-btn class="mx-2" :to="{ name: 'userList' }"> Users </v-btn>
-          <v-btn class="mx-2" :to="{ name: 'universityList' }"> Universities </v-btn>
+          <v-btn class="mx-2" :to="{ name: 'universityList' }">
+            Universities
+          </v-btn>
         </div>
         <div v-else-if="user.role === 'Student'">
           <v-btn class="mx-2" :to="{ name: 'application' }">
