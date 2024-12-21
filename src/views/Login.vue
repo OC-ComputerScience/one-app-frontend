@@ -1,9 +1,11 @@
 <script setup>
 import { ref } from "vue";
 import LoginDialog from "../components/LoginDialog.vue";
+import Utils from "../config/utils.js";
 
 const showLogin = ref(false);
 const showSignup = ref(false);
+Utils.removeItem("user");
 
 const changeLoginState = () => {
   showLogin.value = !showLogin.value;
@@ -65,6 +67,12 @@ const changeSignupState = () => {
     <v-dialog v-model="showSignup" max-width="600px">
       <LoginDialog
         :displayLoginFirst="false"
+        @close-dialog="changeSignupState"
+      />
+    </v-dialog>
+    <v-dialog v-model="showLogin" max-width="600px">
+      <LoginDialog
+        :displayLoginFirst="true"
         @close-dialog="changeSignupState"
       />
     </v-dialog>
