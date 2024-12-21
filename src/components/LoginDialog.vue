@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import UserServices from "../services/UserServices";
 import RoleServices from "../services/RoleServices";
 import Utils from "../config/utils.js";
+import store from "../store/store";
 
 const emit = defineEmits(["closeDialog"]);
 const router = useRouter();
@@ -43,11 +44,12 @@ const signIn = async () => {
     try {
       let response = await UserServices.loginUser(user.value);
       let loginUser = response.data;
-      Utils.setStore("user", loginUser);
+
+      store.commit("setLoginUser", loginUser);
       let role = await RoleServices.getRoleById(loginUser.roleId);
       loginUser.role = role.data.type;
       Utils.removeItem("user");
-      Utils.setStore("user", loginUser);
+      store.commit("setLoginUser", loginUser);
 
       router.push({ name: "home" });
     } catch (err) {
@@ -60,11 +62,11 @@ const signIn = async () => {
         .then(async (response) => {
           response = await UserServices.loginUser(user.value);
           let loginUser = response.data;
-          Utils.setStore("user", loginUser);
+          store.commit("setLoginUser", loginUser);
           let role = await RoleServices.getRoleById(loginUser.roleId);
           loginUser.role = role.data.type;
           Utils.removeItem("user");
-          Utils.setStore("user", loginUser);
+          store.commit("setLoginUser", loginUser);
           router.push({ name: "home" });
         })
         .catch((error) => {
