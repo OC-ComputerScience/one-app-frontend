@@ -103,6 +103,7 @@ onMounted(async () => {
       appFieldValue.value.fieldValueName === "1" ? true : false;
   } else if (type.value === "State") {
     fieldValues.value = states.states;
+    selectedFieldValue.value = appFieldValue.value.fieldValueName;
   }
 });
 </script>
