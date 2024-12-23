@@ -1,7 +1,7 @@
 <script setup>
 import states from "../../config/states";
 import AppFieldValueServices from "../../services/AppFieldValueServices";
-import { VDateInput } from "vuetify/labs/VDateInput";
+//import { VDateInput } from "vuetify/labs/VDateInput";
 import { ref, onMounted } from "vue";
 
 const props = defineProps(["fieldPageGroup", "applicationId", "setNumber"]);
@@ -15,6 +15,7 @@ const appFieldValue = ref({
 });
 const fieldValues = ref([]);
 const selectedFieldValue = ref(null);
+const dateFieldValue = ref(null);
 const type = ref("");
 const required = ref(false);
 
@@ -37,13 +38,17 @@ const rules = {
 };
 
 const changeFieldValue = (value) => {
-  console.log(appFieldValue.value);
   appFieldValue.value.fieldValueId = value.id;
   appFieldValue.value.fieldValueName = value.value;
-  console.log(appFieldValue.value);
 };
 
 const saveFieldValue = async () => {
+  if (type.value == "Date")
+    if (dateFieldValue.value != null)
+      appFieldValue.value.fieldValueName =
+        dateFieldValue.value.toLocaleDateString();
+    else appFieldValue.value.fieldValueName = "";
+
   if (appFieldValue.value.fieldValueName === "") {
     return;
   }
@@ -104,6 +109,9 @@ onMounted(async () => {
   } else if (type.value === "State") {
     fieldValues.value = states.states;
     selectedFieldValue.value = appFieldValue.value.fieldValueName;
+  } else if (type.value === "Date") {
+    if (appFieldValue.value.fieldValueName == "") dateFieldValue.value = null;
+    else dateFieldValue.value = new Date(appFieldValue.value.fieldValueName);
   }
 });
 </script>
@@ -114,16 +122,18 @@ onMounted(async () => {
       v-model="appFieldValue.fieldValueName"
       :label="props.fieldPageGroup.field.name"
       @update:modelValue="saveFieldValue"
+      :rules="required ? rules.general : []"
     ></v-checkbox>
   </div>
   <div v-else-if="type === 'Date'">
     <v-date-input
-      v-model="appFieldValue.fieldValueName"
+      v-model="dateFieldValue"
       variant="outlined"
       density="compact"
       :label="props.fieldPageGroup.field.name"
       :placeholder="props.fieldPageGroup.field.placeholderText"
       v-on:blur="saveFieldValue"
+      :rules="required ? rules.general : []"
     ></v-date-input>
   </div>
   <div v-else-if="type === 'Dropdown' || type === 'State'">
