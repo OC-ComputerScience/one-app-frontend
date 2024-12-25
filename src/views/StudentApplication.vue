@@ -1,23 +1,4 @@
 <script setup>
-<<<<<<< Updated upstream
-import PageServices from '../services/PageServices'
-import ApplicationServices from '../services/ApplicationServices'
-import StudentPages from '../components/student/StudentPages.vue'
-import StudentPageView from '../components/student/StudentPageView.vue'
-import StudentPageGroup from '../components/student/StudentPageGroup.vue'
-import store from '../store/store'
-import { ref, onMounted } from 'vue'
-
-const pages = ref([])
-const activePage = ref({})
-const pageKey = ref(0)
-const user = ref(null)
-const application = ref(null)
-
-const forceUpdate = () => {
-    pageKey.value += 1
-}
-=======
 import PageServices from "../services/PageServices";
 import ApplicationServices from "../services/ApplicationServices";
 import StudentPages from "../components/student/StudentPages.vue";
@@ -60,24 +41,12 @@ const forceUpdate = async () => {
   pageKey.value += 1;
   setNavButtons();
 };
->>>>>>> Stashed changes
 
 const changeActivePage = (page) => {
-    activePage.value = page
-    forceUpdate()
-}
+  activePage.value = page;
+  forceUpdate();
+};
 
-<<<<<<< Updated upstream
-const retrieveApplications = async() => {
-    try {
-        const response = await ApplicationServices.getApplicationsByUserId(user.value.id)
-        application.value = response.data[0]
-        if(!application.value) {
-            await createApplication()
-        }
-    } catch (err) {
-        console.error(err)
-=======
 const setNavButtons = () => {
   const index = pages.value.indexOf(activePage.value);
 
@@ -125,45 +94,12 @@ const retrieveApplications = async () => {
 
     if (!application.value) {
       await createApplication();
->>>>>>> Stashed changes
     }
-}
+  } catch (err) {
+    console.error(err);
+  }
+};
 
-<<<<<<< Updated upstream
-const createApplication = async() => {
-    try {
-        const application = {
-            status: 'pending',
-            userId: user.value.id
-        }
-        const response = await ApplicationServices.addApplications(application)
-        application.value = response.data
-    } catch (err) {
-        console.error(err)
-    }
-}
-
-const retrievePages = async() => {
-    try {
-        const response = await PageServices.getPagesByUserId(user.value.id)
-        pages.value = response.data
-        pages.value.sort((a, b) => { return a.pageSequence - b.pageSequence })
-        pages.value.forEach(page => {
-            page.pageGroups.sort((a, b) => { return a.groupSequence - b.groupSequence })
-        })
-        activePage.value = pages.value[0]
-    } catch (err) {
-        console.error(err)
-    }
-}
-
-onMounted(async() => {
-    user.value = store.getters.getUser
-    await retrieveApplications()
-    await retrievePages()
-})
-
-=======
 const createApplication = async () => {
   try {
     const application = {
@@ -222,66 +158,57 @@ onMounted(async () => {
   await retrievePages(true);
   setNavButtons();
 });
->>>>>>> Stashed changes
 </script>
 
 <template>
-<div>
-    <StudentPages 
-        :pages="pages"
-        :activePage="activePage"
-        @change-active-page="changeActivePage"
+  <div>
+    <StudentPages
+      :pages="pages"
+      :activePage="activePage"
+      @change-active-page="changeActivePage"
     />
-    <StudentPageView 
-        v-if="pages.length > 0"
-        :page="activePage"
-        :key="pageKey"
+    <StudentPageView
+      v-if="pages.length > 0"
+      :page="activePage"
+      :key="pageKey"
     />
-<<<<<<< Updated upstream
-    <div v-for="pageGroup in activePage.pageGroups"  class="mb-4 mr-4 ml-4">
-        <StudentPageGroup 
-            :applicationId="application.id"
-            :page-group="pageGroup"
-        />
-    </div>
-</div>
-
-</template>
-=======
     <div v-for="pageGroup in activePage.pageGroups" class="mb-4 mr-4 ml-4">
       <StudentPageGroup :applicationId="appId" :page-group="pageGroup" />
+      <div
+        v-for="pageGroup in activePage.pageGroups"
+        class="mb-4 mr-4 ml-4"
+      ></div>
     </div>
+    <v-card>
+      <v-card-actions align="center">
+        <v-btn
+          v-if="showPrevBtn"
+          @click="prevPage"
+          class="mx-4 my-4"
+          color="primary"
+          >Previous Page</v-btn
+        >
+        <v-btn
+          v-if="showNextBtn"
+          @click="nextPage"
+          class="mx-4 my-4"
+          color="primary"
+          >Next Page</v-btn
+        >
+        <v-btn
+          v-if="showSubmitBtn"
+          @click="showSubDialog"
+          class="mx-4 my-4"
+          color="primary"
+          >Submit Application</v-btn
+        >
+      </v-card-actions>
+    </v-card>
+    <v-dialog v-model="showSubmitDialog" max-width="600px">
+      <AppSubDiaglog
+        @close-dialog="closeDialog"
+        @submitApplication="submitApplication"
+      />
+    </v-dialog>
   </div>
-  <v-card>
-    <v-card-actions align="center">
-      <v-btn
-        v-if="showPrevBtn"
-        @click="prevPage"
-        class="mx-4 my-4"
-        color="primary"
-        >Previous Page</v-btn
-      >
-      <v-btn
-        v-if="showNextBtn"
-        @click="nextPage"
-        class="mx-4 my-4"
-        color="primary"
-        >Next Page</v-btn
-      >
-      <v-btn
-        v-if="showSubmitBtn"
-        @click="showSubDialog"
-        class="mx-4 my-4"
-        color="primary"
-        >Submit Application</v-btn
-      >
-    </v-card-actions>
-  </v-card>
-  <v-dialog v-model="showSubmitDialog" max-width="600px">
-    <AppSubDiaglog
-      @close-dialog="closeDialog"
-      @submitApplication="submitApplication"
-    />
-  </v-dialog>
 </template>
->>>>>>> Stashed changes
