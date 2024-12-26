@@ -166,6 +166,7 @@ onMounted(async () => {
       :pages="pages"
       :activePage="activePage"
       @change-active-page="changeActivePage"
+      @display-sub-diaglog="showSubDialog"
     />
     <StudentPageView
       v-if="pages.length > 0"
