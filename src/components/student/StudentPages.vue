@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUpdated } from "vue";
 
-const props = defineProps(["pages", "activePage"]);
+const props = defineProps(["pages", "activePage", "application"]);
 const emit = defineEmits(["changeActivePage", "displaySubDiaglog"]);
 
 const activePage = ref({});
@@ -11,6 +11,12 @@ const changeActivePage = () => {
 };
 const displaySubDiaglog = () => {
   emit("displaySubDiaglog");
+};
+
+const isDisabled = () => {
+  if (props.application == null) return true;
+  if (!Object.hasOwn(props.application, "isComplete")) return true;
+  return !props.application.isComplete;
 };
 
 onMounted(() => {
@@ -42,7 +48,11 @@ onUpdated(() => {
           :value="page"
         ></v-tab>
       </v-tabs>
-      <v-btn class="ml-5 mt-10" color="primary" @click="displaySubDiaglog"
+      <v-btn
+        :disabled="isDisabled()"
+        class="ml-5 mt-10"
+        color="primary"
+        @click="displaySubDiaglog"
         >Submit Application</v-btn
       >
     </v-navigation-drawer>
