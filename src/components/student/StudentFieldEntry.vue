@@ -2,9 +2,10 @@
 import states from "../../config/states";
 import AppFieldValueServices from "../../services/AppFieldValueServices";
 //import { VDateInput } from "vuetify/labs/VDateInput";
-import { ref, onMounted } from "vue";
+import { ref, defineEmits, onMounted } from "vue";
 
 const props = defineProps(["fieldPageGroup", "applicationId", "setNumber"]);
+const emit = defineEmits(["updatedField"]);
 
 const appFieldValue = ref({
   applicationId: props.applicationId,
@@ -49,13 +50,25 @@ const saveFieldValue = async () => {
         dateFieldValue.value.toLocaleDateString();
     else appFieldValue.value.fieldValueName = "";
 
-  if (appFieldValue.value.fieldValueName === "") {
-    return;
-  }
+  // if (appFieldValue.value.fieldValueName === "") {
+  //   return;
+  //}
   if (appFieldValue.value.id) {
     await updateFieldValue();
+    emit(
+      "updatedField",
+      props.fieldPageGroup.id,
+      appFieldValue.value.fieldValueName,
+      props.setNumber
+    );
   } else {
     await saveNewFieldValue();
+    emit(
+      "updatedField",
+      props.fieldPageGroup.id,
+      appFieldValue.value.fieldValueName,
+      props.setNumber
+    );
   }
 };
 
@@ -88,6 +101,7 @@ onMounted(async () => {
   type.value = props.fieldPageGroup.field.type;
   required.value = props.fieldPageGroup.field.isRequired;
   appFieldValue.value.fieldId = props.fieldPageGroup.field.id;
+
   if (props.fieldPageGroup.field.appFieldValues.length > 0) {
     let value = props.fieldPageGroup.field.appFieldValues.find(
       (appFieldValue) => {
