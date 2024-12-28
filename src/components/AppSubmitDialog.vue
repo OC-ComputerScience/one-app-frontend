@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-console.log("dialgo");
+
 const emits = defineEmits(["closeDialog", "submitApplication"]);
 const confirm = ref(false);
 </script>

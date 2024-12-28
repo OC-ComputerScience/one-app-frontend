@@ -1,26 +1,37 @@
 <script setup>
 import StudentFieldEntry from "./StudentFieldEntry.vue";
-import { computed, defineEmits } from "vue";
+
+import { computed, onMounted, ref, watch} from "vue";
 
 const props = defineProps(["pageGroup", "applicationId"]);
 const emit = defineEmits(["revalidateApp"]);
+const pgComplete = ref([]);
 
-const revalidateGroup = (fieldPageGroupId, value, index) => {
-  props.pageGroup.isComplete = true;
+const revalidateGroup = (fieldPageGroupId, value, setNumber) => {
 
-  props.pageGroup.fieldPageGroups.forEach((fpg) => {
-    if (fpg.id == fieldPageGroupId) {
-      fpg.field.appFieldValues[index - 1].fieldValueName = value;
-    }
-    if (fpg.field.isRequired) {
-      fpg.field.appFieldValues.forEach((afv) => {
-        if (afv.fieldValueName == null || afv.fieldValueName == "") {
-          props.pageGroup.isComplete = false;
-        }
+
+  for (let i = 0; i < props.pageGroup.numGroups; i++) {
+    pgComplete.value[i] = true;
+
+    props.pageGroup.fieldPageGroups.forEach((fpg) => {
+      fpg.field.appFieldValues.sort((a, b) => {
+        return a.setNumber - b.setNumber;
       });
-    }
-  });
-
+      if (fpg.id == fieldPageGroupId) {
+        fpg.field.appFieldValues[setNumber - 1].fieldValueName = value;
+      }
+      if (fpg.field.isRequired) {
+        if (
+          fpg.field.appFieldValues[i].fieldValueName == null ||
+          fpg.field.appFieldValues[i].fieldValueName == ""
+        ) {
+          props.pageGroup.isComplete = false;
+          fpg.isComplete = false;
+          pgComplete.value[i] = false;
+        }
+      }
+    });
+  } 
   emit("revalidateApp");
 };
 
@@ -33,6 +44,18 @@ const canAddGroups = computed(() => {
 const addPageGroup = () => {
   props.pageGroup.numGroups++;
 };
+
+onMounted(() => {
+  revalidateGroup(null, null, null);
+});
+
+watch(
+  () => props.pageGroup,
+  (first, second) => {
+    revalidateGroup(null, null, null);
+  }
+);
+
 </script>
 
 <template>
@@ -43,12 +66,13 @@ const addPageGroup = () => {
     <v-card-text>
       {{ props.pageGroup.text }}
       <div
-        v-if="pageGroup.isComplete"
+        v-if="pgComplete[index - 1]"
         class="mt-3 font-italic font-weight-medium"
       >
         All required fields are completed
       </div>
-      <div v-if="!pageGroup.isComplete" class="mt-3 font-italic text-red">
+
+      <div v-if="!pgComplete[index - 1]" class="mt-3 font-italic text-red">
         All required fields are not completed
       </div>
       <v-row class="mt-3">
