@@ -38,6 +38,7 @@ const showSubDialog = () => {
 
 const forceUpdate = async () => {
   await retrievePages(false);
+  validatePages();
   pageKey.value += 1;
   setNavButtons();
 };
@@ -88,6 +89,7 @@ const retrieveApplications = async () => {
     await ApplicationServices.getApplicationsByUserId(user.value.id).then(
       (response) => {
         application.value = response.data[0];
+        application.value.isComplete = false;
         appId.value = response.data.id;
       }
     );
@@ -108,6 +110,7 @@ const createApplication = async () => {
     };
     await ApplicationServices.addApplications(application).then((response) => {
       application.value = response.data;
+      application.value.isComplete = false;
       appId.value = response.data.id;
     });
   } catch (err) {
@@ -137,7 +140,6 @@ const retrievePages = async (setActive) => {
         });
       });
     });
-
     if (setActive) {
       activePage.value = pages.value[0];
     } else {
@@ -157,13 +159,16 @@ const validatePages = () => {
     page.pageGroups.forEach((group) => {
       group.isComplete = true;
       group.fieldPageGroups.forEach((fpg) => {
+
         fpg.isComplete = true;
+
         if (fpg.field.isRequired) {
           fpg.field.appFieldValues.forEach((afv) => {
             if (afv.fieldValueName == null || afv.fieldValueName == "") {
               application.value.isComplete = false;
               group.isComplete = false;
               fpg.isComplete = false;
+
             }
           });
         }
@@ -178,6 +183,7 @@ onMounted(async () => {
   user.value = store.getters.getUser;
   await retrieveApplications();
   await retrievePages(true);
+  validatePages();
   setNavButtons();
 });
 </script>
@@ -187,6 +193,7 @@ onMounted(async () => {
     <StudentPages
       :pages="pages"
       :activePage="activePage"
+      :application="application"
       @change-active-page="changeActivePage"
       @display-sub-diaglog="showSubDialog"
     />
@@ -196,7 +203,11 @@ onMounted(async () => {
       :key="pageKey"
     />
     <div v-for="pageGroup in activePage.pageGroups" class="mb-4 mr-4 ml-4">
-      <StudentPageGroup :applicationId="appId" :page-group="pageGroup" />
+      <StudentPageGroup
+        :applicationId="appId"
+        :page-group="pageGroup"
+        @revalidateApp="validatePages"
+      />
       <div
         v-for="pageGroup in activePage.pageGroups"
         class="mb-4 mr-4 ml-4"
@@ -221,6 +232,7 @@ onMounted(async () => {
         <v-btn
           v-if="showSubmitBtn"
           @click="showSubDialog"
+          :disabled="submitDisabled()"
           class="mx-4 my-4"
           color="primary"
           >Submit Application</v-btn

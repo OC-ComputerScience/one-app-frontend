@@ -1,16 +1,14 @@
 <script setup>
 import StudentFieldEntry from "./StudentFieldEntry.vue";
-import { computed, onMounted, ref, watch } from "vue";
+
+import { computed, onMounted, ref, watch} from "vue";
 
 const props = defineProps(["pageGroup", "applicationId"]);
 const emit = defineEmits(["revalidateApp"]);
 const pgComplete = ref([]);
 
 const revalidateGroup = (fieldPageGroupId, value, setNumber) => {
-  console.log(props.pageGroup);
-  console.log(fieldPageGroupId);
-  console.log(value);
-  console.log(setNumber);
+
 
   for (let i = 0; i < props.pageGroup.numGroups; i++) {
     pgComplete.value[i] = true;
@@ -33,8 +31,7 @@ const revalidateGroup = (fieldPageGroupId, value, setNumber) => {
         }
       }
     });
-  }
-  console.log(pgComplete);
+  } 
   emit("revalidateApp");
 };
 
@@ -47,6 +44,7 @@ const canAddGroups = computed(() => {
 const addPageGroup = () => {
   props.pageGroup.numGroups++;
 };
+
 onMounted(() => {
   revalidateGroup(null, null, null);
 });
@@ -57,6 +55,7 @@ watch(
     revalidateGroup(null, null, null);
   }
 );
+
 </script>
 
 <template>
@@ -72,6 +71,7 @@ watch(
       >
         All required fields are completed
       </div>
+
       <div v-if="!pgComplete[index - 1]" class="mt-3 font-italic text-red">
         All required fields are not completed
       </div>
