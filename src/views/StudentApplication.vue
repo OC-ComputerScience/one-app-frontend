@@ -151,7 +151,29 @@ const retrievePages = async (setActive) => {
     console.error(err);
   }
 };
-
+const validatePages = () => {
+  application.value.isComplete = true;
+  pages.value.forEach((page) => {
+    page.pageGroups.forEach((group) => {
+      group.isComplete = true;
+      group.fieldPageGroups.forEach((fpg) => {
+        fpg.isComplete = true;
+        if (fpg.field.isRequired) {
+          fpg.field.appFieldValues.forEach((afv) => {
+            if (afv.fieldValueName == null || afv.fieldValueName == "") {
+              application.value.isComplete = false;
+              group.isComplete = false;
+              fpg.isComplete = false;
+            }
+          });
+        }
+      });
+    });
+  });
+};
+const submitDisabled = () => {
+  return !application.value.isComplete;
+};
 onMounted(async () => {
   user.value = store.getters.getUser;
   await retrieveApplications();
