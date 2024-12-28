@@ -5,6 +5,7 @@ import { useRouter } from "vue-router";
 import UserServices from "../services/UserServices";
 import Utils from "../config/utils";
 import store from "../store/store";
+import ApplicationServices from "../services/ApplicationServices";
 
 const router = useRouter();
 
@@ -12,9 +13,29 @@ const user = ref(null);
 const title = ref("OneApp");
 const logoURL = ref("");
 
+const application = ref(null);
+const appComplete = ref(false);
+
+const checkCurrentApplication = async () => {
+  try {
+    user.value = store.getters.getUser;
+    await ApplicationServices.getApplicationsByUserId(user.value.id).then(
+      (response) => {
+        application.value = response.data[0];
+        if (application.value.status === "submitted") {
+          appComplete.value = true;
+        }
+      }
+    );
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 onMounted(() => {
   logoURL.value = logo;
   user.value = JSON.parse(localStorage.getItem("user"));
+  checkCurrentApplication();
 });
 
 function logout() {
@@ -53,7 +74,7 @@ function logout() {
             Universities
           </v-btn>
         </div>
-        <div v-else-if="user.role === 'Student'">
+        <div v-else-if="user.role === 'Student' && !appComplete">
           <v-btn class="mx-2" :to="{ name: 'application' }">
             Application
           </v-btn>
