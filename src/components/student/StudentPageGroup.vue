@@ -1,31 +1,39 @@
 <script setup>
 import StudentFieldEntry from "./StudentFieldEntry.vue";
-import { computed, defineEmits, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
 const props = defineProps(["pageGroup", "applicationId"]);
 const emit = defineEmits(["revalidateApp"]);
 const pgComplete = ref([]);
 
-const revalidateGroup = (fieldPageGroupId, value, index) => {
-  props.pageGroup.isComplete = true;
-  let indx = 0;
-  props.pageGroup.fieldPageGroups.forEach((fpg) => {
-    pgComplete.value[indx] = true;
-    fpg.isComplete = true;
-    if (fpg.id == fieldPageGroupId) {
-      fpg.field.appFieldValues[index - 1].fieldValueName = value;
-    }
-    if (fpg.field.isRequired) {
-      fpg.field.appFieldValues.forEach((afv) => {
-        if (afv.fieldValueName == null || afv.fieldValueName == "") {
+const revalidateGroup = (fieldPageGroupId, value, setNumber) => {
+  console.log(props.pageGroup);
+  console.log(fieldPageGroupId);
+  console.log(value);
+  console.log(setNumber);
+
+  for (let i = 0; i < props.pageGroup.numGroups; i++) {
+    pgComplete.value[i] = true;
+
+    props.pageGroup.fieldPageGroups.forEach((fpg) => {
+      fpg.field.appFieldValues.sort((a, b) => {
+        return a.setNumber - b.setNumber;
+      });
+      if (fpg.id == fieldPageGroupId) {
+        fpg.field.appFieldValues[setNumber - 1].fieldValueName = value;
+      }
+      if (fpg.field.isRequired) {
+        if (
+          fpg.field.appFieldValues[i].fieldValueName == null ||
+          fpg.field.appFieldValues[i].fieldValueName == ""
+        ) {
           props.pageGroup.isComplete = false;
           fpg.isComplete = false;
+          pgComplete.value[i] = false;
         }
-      });
-    }
-    pgComplete.value[indx] = fpg.isComplete;
-    indx++;
-  });
+      }
+    });
+  }
   console.log(pgComplete);
   emit("revalidateApp");
 };
@@ -42,6 +50,13 @@ const addPageGroup = () => {
 onMounted(() => {
   revalidateGroup(null, null, null);
 });
+
+watch(
+  () => props.pageGroup,
+  (first, second) => {
+    revalidateGroup(null, null, null);
+  }
+);
 </script>
 
 <template>
@@ -51,10 +66,13 @@ onMounted(() => {
     </v-toolbar>
     <v-card-text>
       {{ props.pageGroup.text }}
-      <div v-if="pgComplete[index]" class="mt-3 font-italic font-weight-medium">
+      <div
+        v-if="pgComplete[index - 1]"
+        class="mt-3 font-italic font-weight-medium"
+      >
         All required fields are completed
       </div>
-      <div v-if="!pgComplete[index]" class="mt-3 font-italic text-red">
+      <div v-if="!pgComplete[index - 1]" class="mt-3 font-italic text-red">
         All required fields are not completed
       </div>
       <v-row class="mt-3">

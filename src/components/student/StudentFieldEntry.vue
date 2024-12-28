@@ -5,7 +5,7 @@ import AppFieldValueServices from "../../services/AppFieldValueServices";
 import { ref, onMounted } from "vue";
 
 const props = defineProps(["fieldPageGroup", "applicationId", "setNumber"]);
-
+const emits = defineEmits(["updatedField"]);
 const appFieldValue = ref({
   applicationId: props.applicationId,
   setNumber: props.setNumber,
@@ -41,6 +41,13 @@ const changeFieldValue = (value) => {
   appFieldValue.value.fieldValueId = value.id;
   appFieldValue.value.fieldValueName = value.value;
 };
+const changeStateFieldValue = (value) => {
+  if (value == null) {
+    appFieldValue.value.fieldValueName = "";
+    return;
+  }
+  appFieldValue.value.fieldValueName = value.value;
+};
 
 const saveFieldValue = async () => {
   if (type.value == "Date")
@@ -49,13 +56,22 @@ const saveFieldValue = async () => {
         dateFieldValue.value.toLocaleDateString();
     else appFieldValue.value.fieldValueName = "";
 
-  if (appFieldValue.value.fieldValueName === "") {
-    return;
-  }
   if (appFieldValue.value.id) {
     await updateFieldValue();
+    emits(
+      "updatedField",
+      props.fieldPageGroup.field.id,
+      appFieldValue.value.fieldValueName,
+      props.setNumber
+    );
   } else {
     await saveNewFieldValue();
+    emits(
+      "updatedField",
+      props.fieldPageGroup.field.id,
+      appFieldValue.value.fieldValueName,
+      props.setNumber
+    );
   }
 };
 
@@ -136,7 +152,7 @@ onMounted(async () => {
       :rules="required ? rules.general : []"
     ></v-date-input>
   </div>
-  <div v-else-if="type === 'Dropdown' || type === 'State'">
+  <div v-else-if="type === 'Dropdown'">
     <v-autocomplete
       v-model="selectedFieldValue"
       :items="fieldValues"
@@ -147,6 +163,21 @@ onMounted(async () => {
       density="compact"
       return-object
       @update:modelValue="changeFieldValue(selectedFieldValue)"
+      v-on:blur="saveFieldValue()"
+      :rules="required ? rules.general : []"
+    ></v-autocomplete>
+  </div>
+  <div v-else-if="type === 'State'">
+    <v-autocomplete
+      v-model="selectedFieldValue"
+      :items="fieldValues"
+      :label="props.fieldPageGroup.field.name"
+      :placeholder="props.fieldPageGroup.field.placeholderText"
+      item-title="value"
+      variant="outlined"
+      density="compact"
+      return-object
+      @update:modelValue="changeStateFieldValue(selectedFieldValue)"
       v-on:blur="saveFieldValue()"
       :rules="required ? rules.general : []"
     ></v-autocomplete>
