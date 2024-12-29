@@ -3,7 +3,6 @@ import logo from "/chef.png";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import UserServices from "../services/UserServices";
-import Utils from "../config/utils";
 import store from "../store/store";
 
 const router = useRouter();
@@ -26,9 +25,7 @@ function logout() {
       console.log(error);
     });
 
-  Utils.removeItem("user");
-  user.value = null;
-  store.commit("setLoginUser", null);
+  store.commit("removeLoginUser");
   router.push({ name: "login" });
 }
 </script>
@@ -45,6 +42,7 @@ function logout() {
           contain
         ></v-img>
       </router-link>
+      <div class="text-h5">{{ title }}</div>
       <div v-if="user">
         <div v-if="user.role === 'Admin'">
           <v-btn class="mx-2" :to="{ name: 'editForm' }"> Form </v-btn>
@@ -60,11 +58,6 @@ function logout() {
         </div>
       </div>
 
-      <!-- <v-btn class="mx-2" :to="{ name: 'recipes' }"> Recipes </v-btn> -->
-
-      <!-- <v-btn v-if="user !== null" class="mx-2" :to="{ name: 'ingredients' }">
-        Ingredients
-      </v-btn> -->
       <v-spacer></v-spacer>
       <v-menu v-if="user !== null" min-width="200px" rounded>
         <template v-slot:activator="{ props }">
