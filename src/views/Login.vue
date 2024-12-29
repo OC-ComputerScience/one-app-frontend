@@ -1,11 +1,13 @@
 <script setup>
 import { ref } from "vue";
 import LoginDialog from "../components/LoginDialog.vue";
-import Utils from "../config/utils.js";
+import store from "../store/store.js";
 
 const showLogin = ref(false);
 const showSignup = ref(false);
-Utils.removeItem("user");
+
+store.commit("removeLoginUser");
+store.commit("setLoginUser", null);
 
 const changeLoginState = () => {
   showLogin.value = !showLogin.value;

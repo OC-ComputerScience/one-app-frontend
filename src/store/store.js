@@ -1,6 +1,6 @@
 import { createStore } from "vuex"
 import Utils from "../config/utils"
-import RoleServices from "../services/RoleServices.js"
+
 
 const user = Utils.getStore("user")
 
@@ -12,6 +12,10 @@ const store = createStore({
         setLoginUser(state, user) {
             state.loginUser = user
             Utils.setStore("user", user)
+        },
+        removeLoginUser(state) {
+            state.loginUser = null
+            Utils.removeStore("user")
         }
     },
     actions: {
