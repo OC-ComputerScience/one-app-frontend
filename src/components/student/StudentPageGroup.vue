@@ -1,15 +1,13 @@
 <script setup>
 import StudentFieldEntry from "./StudentFieldEntry.vue";
 
-import { computed, onMounted, ref, watch} from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
 const props = defineProps(["pageGroup", "applicationId"]);
 const emit = defineEmits(["revalidateApp"]);
 const pgComplete = ref([]);
 
 const revalidateGroup = (fieldPageGroupId, value, setNumber) => {
-
-
   for (let i = 0; i < props.pageGroup.numGroups; i++) {
     pgComplete.value[i] = true;
 
@@ -18,20 +16,31 @@ const revalidateGroup = (fieldPageGroupId, value, setNumber) => {
         return a.setNumber - b.setNumber;
       });
       if (fpg.id == fieldPageGroupId) {
+        if (fpg.field.appFieldValues.length < 1) {
+          fpg.field.appFieldValues[setNumber - 1] = {};
+          fpg.field.appFieldValues[setNumber - 1].setNumber = 1;
+          fpg.field.appFieldValues[setNumber - 1].fieldValueName = null;
+        }
         fpg.field.appFieldValues[setNumber - 1].fieldValueName = value;
       }
       if (fpg.field.isRequired) {
-        if (
-          fpg.field.appFieldValues[i].fieldValueName == null ||
-          fpg.field.appFieldValues[i].fieldValueName == ""
-        ) {
+        if (fpg.field.appFieldValues[i] != null) {
+          if (
+            fpg.field.appFieldValues[i].fieldValueName == null ||
+            fpg.field.appFieldValues[i].fieldValueName == ""
+          ) {
+            props.pageGroup.isComplete = false;
+            fpg.isComplete = false;
+            pgComplete.value[i] = false;
+          }
+        } else {
           props.pageGroup.isComplete = false;
           fpg.isComplete = false;
           pgComplete.value[i] = false;
         }
       }
     });
-  } 
+  }
   emit("revalidateApp");
 };
 
@@ -55,7 +64,6 @@ watch(
     revalidateGroup(null, null, null);
   }
 );
-
 </script>
 
 <template>
