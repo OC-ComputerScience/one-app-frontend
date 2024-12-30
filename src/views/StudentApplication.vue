@@ -85,37 +85,36 @@ const prevPage = () => {
 };
 
 const retrieveApplications = async () => {
-  try {
-    await ApplicationServices.getApplicationsByUserId(user.value.id).then(
-      (response) => {
+  await ApplicationServices.getApplicationsByUserId(user.value.id)
+    .then((response) => {
+      if (response.data.length > 0) {
         application.value = response.data[0];
         application.value.isComplete = false;
-        appId.value = response.data.id;
+        appId.value = application.value.id;
       }
-    );
-
-    if (!application.value) {
-      await createApplication();
-    }
-  } catch (err) {
-    console.error(err);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+  if (application.value == null) {
+    await createApplication();
   }
 };
 
 const createApplication = async () => {
-  try {
-    const application = {
-      status: "pending",
-      userId: user.value.id,
-    };
-    await ApplicationServices.addApplications(application).then((response) => {
+  const application = {
+    status: "pending",
+    userId: user.value.id,
+  };
+  await ApplicationServices.addApplications(application)
+    .then((response) => {
       application.value = response.data;
       application.value.isComplete = false;
       appId.value = response.data.id;
+    })
+    .catch((err) => {
+      console.error(err);
     });
-  } catch (err) {
-    console.error(err);
-  }
 };
 
 const retrievePages = async (setActive) => {
@@ -127,6 +126,7 @@ const retrievePages = async (setActive) => {
     pages.value.sort((a, b) => {
       return a.pageSequence - b.pageSequence;
     });
+
     pages.value.forEach((page) => {
       page.pageGroups.sort((a, b) => {
         return a.groupSequence - b.groupSequence;
@@ -153,22 +153,29 @@ const retrievePages = async (setActive) => {
     console.error(err);
   }
 };
+
 const validatePages = () => {
+  if (application.value == null) {
+    return;
+  }
+
   application.value.isComplete = true;
   pages.value.forEach((page) => {
     page.pageGroups.forEach((group) => {
       group.isComplete = true;
       group.fieldPageGroups.forEach((fpg) => {
-
         fpg.isComplete = true;
-
         if (fpg.field.isRequired) {
+          if (fpg.field.appFieldValues.length == 0) {
+            application.value.isComplete = false;
+            group.isComplete = false;
+            fpg.isComplete = false;
+          }
           fpg.field.appFieldValues.forEach((afv) => {
             if (afv.fieldValueName == null || afv.fieldValueName == "") {
               application.value.isComplete = false;
               group.isComplete = false;
               fpg.isComplete = false;
-
             }
           });
         }
@@ -176,7 +183,11 @@ const validatePages = () => {
     });
   });
 };
+
 const submitDisabled = () => {
+  if (application.value == null) {
+    return true;
+  }
   return !application.value.isComplete;
 };
 onMounted(async () => {

@@ -13,7 +13,7 @@ export default class Utils {
     return JSON.parse(window.localStorage.getItem(name));
   };
   // remove item
-  static removeItem = (name) => {
+  static removeStore = (name) => {
     if (!name) return;
     return window.localStorage.removeItem(name);
   };
