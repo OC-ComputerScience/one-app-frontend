@@ -153,10 +153,12 @@ const retrievePages = async (setActive) => {
     console.error(err);
   }
 };
+
 const validatePages = () => {
   if (application.value == null) {
     return;
   }
+
   application.value.isComplete = true;
   pages.value.forEach((page) => {
     page.pageGroups.forEach((group) => {
@@ -181,6 +183,7 @@ const validatePages = () => {
     });
   });
 };
+
 const submitDisabled = () => {
   if (application.value == null) {
     return true;

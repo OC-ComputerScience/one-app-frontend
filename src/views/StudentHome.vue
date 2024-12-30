@@ -19,6 +19,9 @@ const checkCurrentApplication = async () => {
     user.value = store.getters.getUser;
     await ApplicationServices.getApplicationsByUserId(user.value.id).then(
       (response) => {
+        if (response.data.length === 0) {
+          return;
+        }
         application.value = response.data[0];
         if (application.value.status === "submitted") {
           appComplete.value = true;
