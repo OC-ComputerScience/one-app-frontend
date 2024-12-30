@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import LoginDialog from "../components/LoginDialog.vue";
 import store from "../store/store.js";
 
@@ -15,6 +15,11 @@ const changeLoginState = () => {
 const changeSignupState = () => {
   showSignup.value = !showSignup.value;
 };
+
+onMounted(() => {
+  store.commit("removeLoginUser");
+  store.commit("setLoginUser", null);
+});
 </script>
 
 <template>
