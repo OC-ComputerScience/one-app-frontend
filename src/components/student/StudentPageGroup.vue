@@ -15,8 +15,9 @@ const revalidateGroup = (fieldPageGroupId, value, setNumber) => {
       fpg.field.appFieldValues.sort((a, b) => {
         return a.setNumber - b.setNumber;
       });
+      fpg.isComplete = true;
       if (fpg.id == fieldPageGroupId) {
-        if (fpg.field.appFieldValues.length < 1) {
+        if (fpg.field.appFieldValues.length < setNumber) {
           fpg.field.appFieldValues[setNumber - 1] = {};
           fpg.field.appFieldValues[setNumber - 1].setNumber = 1;
           fpg.field.appFieldValues[setNumber - 1].fieldValueName = null;
