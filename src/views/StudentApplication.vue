@@ -182,6 +182,7 @@ const validatePages = () => {
       });
     });
   });
+  console.log("app complete =" + application.value.isComplete);
 };
 
 const submitDisabled = () => {
