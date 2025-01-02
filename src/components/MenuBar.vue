@@ -70,9 +70,10 @@ function logout() {
         ></v-img>
       </router-link>
       <div class="text-h5">{{ title }}</div>
+      <v-spacer></v-spacer>
       <div v-if="user">
         <div v-if="user.role === 'Admin'">
-          <v-btn class="mx-2" :to="{ name: 'editForm' }"> Form </v-btn>
+          <v-btn class="mx-2" :to="{ name: 'formList' }"> Forms </v-btn>
           <v-btn class="mx-2" :to="{ name: 'userList' }"> Users </v-btn>
           <v-btn class="mx-2" :to="{ name: 'universityList' }">
             Universities
@@ -85,7 +86,6 @@ function logout() {
         </div>
       </div>
 
-      <v-spacer></v-spacer>
       <v-menu v-if="user !== null" min-width="200px" rounded>
         <template v-slot:activator="{ props }">
           <v-btn icon v-bind="props">

@@ -8,6 +8,7 @@ import AppSubDiaglog from "../components/AppSubmitDialog.vue";
 import store from "../store/store";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import FormServices from "../services/FormServices";
 const router = useRouter();
 
 const pages = ref([]);
@@ -20,6 +21,7 @@ const showNextBtn = ref(false);
 const showSubmitBtn = ref(false);
 const showSubmitDialog = ref(false);
 const appId = ref(null);
+const formId = ref(null);
 
 const submitApplication = async () => {
   application.value.status = "submitted";
@@ -91,6 +93,7 @@ const retrieveApplications = async () => {
         application.value = response.data[0];
         application.value.isComplete = false;
         appId.value = application.value.id;
+        formId.value = application.value.formId;
       }
     })
     .catch((err) => {
@@ -102,9 +105,18 @@ const retrieveApplications = async () => {
 };
 
 const createApplication = async () => {
+  await FormServices.getMainForm()
+    .then((response) => {
+      formId.value = response.data[0].id;
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+
   const application = {
     status: "pending",
     userId: user.value.id,
+    formId: formId.value,
   };
   await ApplicationServices.addApplications(application)
     .then((response) => {
@@ -119,9 +131,11 @@ const createApplication = async () => {
 
 const retrievePages = async (setActive) => {
   try {
-    await PageServices.getPagesByUserId(user.value.id).then((response) => {
-      pages.value = response.data;
-    });
+    await PageServices.getPagesByUserId(user.value.id, formId.value).then(
+      (response) => {
+        pages.value = response.data;
+      }
+    );
 
     pages.value.sort((a, b) => {
       return a.pageSequence - b.pageSequence;

@@ -3,6 +3,7 @@ import StudentHome from "./views/StudentHome.vue"
 import AdminHome from "./views/AdminHome.vue";
 import UniversityHome from "./views/UniversityHome.vue";
 import UniversityList from "./views/UniversityList.vue";
+import FormList from "./views/FormList.vue";
 import UserList from "./views/UserList.vue";
 import Form from "./views/Form.vue";
 import StudentApplication from "./views/StudentApplication.vue";
@@ -33,9 +34,10 @@ const router = createRouter({
       component: AdminHome
     },
     {
-      path: "/editForm",
+      path: "/editForm/:formId",
       name: "editForm",
-      component: Form
+      component: Form,
+      params: true
     },
     {
       path: "/studentHome",
@@ -58,11 +60,17 @@ const router = createRouter({
       component: UniversityList
     },
     {
+      path: "/formList",
+      name: "formList",
+      component: FormList
+    },
+    {
       path: "/userList",
       name: "userList",
       component: UserList
     }
   ],
 });
+
 
 export default router;
