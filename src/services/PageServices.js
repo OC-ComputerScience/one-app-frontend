@@ -1,14 +1,14 @@
 import apiClient from "./services";
 
 export default {
-  getPages() {
-    return apiClient.get("pages");
+  getPages(formId) {
+    return apiClient.get("pages/form/" + formId);
   },
   getPageById(id) {
     return apiClient.get("pages/" + id);
   },
-  getPagesByUserId(id) {
-    return apiClient.get("pages/user/" + id);
+  getPagesByUserId(id,formId) {
+    return apiClient.get("pages/user/" + id+"/form/"+formId);
   },
   addPages(data) {
     return apiClient.post("pages", data);

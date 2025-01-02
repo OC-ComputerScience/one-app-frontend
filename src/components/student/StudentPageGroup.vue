@@ -104,9 +104,10 @@ watch(
   </v-card>
   <v-btn
     v-if="canAddGroups"
-    icon="mdi-plus"
+    rounded="xl"
     color="primary"
-    class="mt-2"
+    class="mt-4"
     @click="addPageGroup"
-  ></v-btn>
+    >+ {{ props.pageGroup.title }}</v-btn
+  >
 </template>
