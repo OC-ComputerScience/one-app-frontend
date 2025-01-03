@@ -3,6 +3,7 @@ import FormServices from "../services/FormServices";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import FormDiaglog from "../components/FormDialog.vue";
+import ExportDiaglog from "../components/ExportDialog.vue";
 
 const router = useRouter();
 const forms = ref([]);
@@ -10,6 +11,7 @@ const forms = ref([]);
 const message = ref("Add, Update, Edit Form Pages and Delete Forms");
 
 const showFormDialog = ref(false);
+const showExportDialog = ref(false);
 const form = ref({});
 
 const editForm = (formx) => {
@@ -32,9 +34,18 @@ const closeDialog = () => {
   showFormDialog.value = false;
 };
 
+const closeExportDialog = () => {
+  showExportDialog.value = false;
+};
+
 const addForm = () => {
   showFormDialog.value = true;
   form.value = null;
+};
+
+const exportForm = (formx) => {
+  form.value = formx;
+  showExportDialog.value = true;
 };
 
 const retrieveForms = () => {
@@ -83,8 +94,8 @@ retrieveForms();
                 <v-icon small class="mx-4" @click="editFormPages(form)">
                   mdi-table
                 </v-icon>
-                <v-icon small class="mx-4" @click="deleteForm(form)">
-                  mdi-delete
+                <v-icon small class="mx-4" @click="exportForm(form)">
+                  mdi-file-download
                 </v-icon>
               </td>
             </tr>
@@ -99,5 +110,8 @@ retrieveForms();
       @close-dialog="closeDialog"
       @updateList="retrieveForms"
     />
+  </v-dialog>
+  <v-dialog v-model="showExportDialog" max-width="600px">
+    <ExportDiaglog :formData="form" @close-export-dialog="closeExportDialog" />
   </v-dialog>
 </template>
