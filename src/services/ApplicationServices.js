@@ -7,6 +7,9 @@ export default {
   getApplications(userId) {
     return apiClient.get("applications/" + userId);
   },
+  getApplicationsForFormSinceDate(formId, date) {
+    return apiClient.get("applications/form/" + formId + "/date/" + date);
+  },
   getApplicationsByUserId(id) {
     return apiClient.get("applications/user/" + id);
   },
