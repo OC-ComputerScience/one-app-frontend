@@ -17,10 +17,12 @@ const fieldValues = ref([]);
 const originalFieldValues = ref([]);
 const fieldTypes = ref([
   "Checkbox",
+  "Country",
   "Date",
   "Dropdown",
   "Email",
   "Number",
+  "Major",
   "Paragraph",
   "Phone Number",
   "Radio",

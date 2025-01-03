@@ -1,5 +1,7 @@
 <script setup>
 import states from "../../config/states";
+import countries from "../../config/countries";
+import majors from "../../config/majors";
 import AppFieldValueServices from "../../services/AppFieldValueServices";
 //import { VDateInput } from "vuetify/labs/VDateInput";
 import { ref, defineEmits, onMounted } from "vue";
@@ -20,6 +22,7 @@ const selectedFieldValue = ref(null);
 const dateFieldValue = ref(null);
 const type = ref("");
 const required = ref(false);
+const displayFieldlName = ref("");
 
 const rules = {
   email: [
@@ -43,7 +46,7 @@ const changeFieldValue = (value) => {
   appFieldValue.value.fieldValueId = value.id;
   appFieldValue.value.fieldValueName = value.value;
 };
-const changeStateFieldValue = (value) => {
+const changeAutoListFieldValue = (value) => {
   if (value == null) {
     appFieldValue.value.fieldValueName = "";
     return;
@@ -106,6 +109,11 @@ onMounted(async () => {
   type.value = props.fieldPageGroup.field.type;
   required.value = props.fieldPageGroup.field.isRequired;
   appFieldValue.value.fieldId = props.fieldPageGroup.field.id;
+  displayFieldlName.value = props.fieldPageGroup.field.name + " *";
+
+  if (props.fieldPageGroup.field.isRequired) {
+    props.fieldPageGroup.field.name = props.fieldPageGroup.field.name + " *";
+  }
 
   if (props.fieldPageGroup.field.appFieldValues.length > 0) {
     let value = props.fieldPageGroup.field.appFieldValues.find(
@@ -125,6 +133,12 @@ onMounted(async () => {
   } else if (type.value === "Checkbox") {
     appFieldValue.value.fieldValueName =
       appFieldValue.value.fieldValueName === "1" ? true : false;
+  } else if (type.value === "Country") {
+    fieldValues.value = countries.countries;
+    selectedFieldValue.value = appFieldValue.value.fieldValueName;
+  } else if (type.value === "Major") {
+    fieldValues.value = majors.majors;
+    selectedFieldValue.value = appFieldValue.value.fieldValueName;
   } else if (type.value === "State") {
     fieldValues.value = states.states;
     selectedFieldValue.value = appFieldValue.value.fieldValueName;
@@ -139,7 +153,7 @@ onMounted(async () => {
   <div v-if="type === 'Checkbox'" class="mt-n2">
     <v-checkbox
       v-model="appFieldValue.fieldValueName"
-      :label="props.fieldPageGroup.field.name"
+      :label="displayFieldlName"
       @update:modelValue="saveFieldValue"
       :rules="required ? rules.general : []"
     ></v-checkbox>
@@ -149,7 +163,7 @@ onMounted(async () => {
       v-model="dateFieldValue"
       variant="outlined"
       density="compact"
-      :label="props.fieldPageGroup.field.name"
+      :label="displayFieldlName"
       :placeholder="props.fieldPageGroup.field.placeholderText"
       v-on:blur="saveFieldValue"
       :rules="required ? rules.general : []"
@@ -159,7 +173,7 @@ onMounted(async () => {
     <v-autocomplete
       v-model="selectedFieldValue"
       :items="fieldValues"
-      :label="props.fieldPageGroup.field.name"
+      :label="displayFieldlName"
       :placeholder="props.fieldPageGroup.field.placeholderText"
       item-title="value"
       variant="outlined"
@@ -170,17 +184,17 @@ onMounted(async () => {
       :rules="required ? rules.general : []"
     ></v-autocomplete>
   </div>
-  <div v-else-if="type === 'State'">
+  <div v-else-if="type === 'State' || type === 'Country' || type === 'Major'">
     <v-autocomplete
       v-model="selectedFieldValue"
       :items="fieldValues"
-      :label="props.fieldPageGroup.field.name"
+      :label="displayFieldlName"
       :placeholder="props.fieldPageGroup.field.placeholderText"
       item-title="value"
       variant="outlined"
       density="compact"
       return-object
-      @update:modelValue="changeStateFieldValue(selectedFieldValue)"
+      @update:modelValue="changeAutoListFieldValue(selectedFieldValue)"
       v-on:blur="saveFieldValue()"
       :rules="required ? rules.general : []"
     ></v-autocomplete>
@@ -190,7 +204,7 @@ onMounted(async () => {
   >
     <v-text-field
       v-model="appFieldValue.fieldValueName"
-      :label="props.fieldPageGroup.field.name"
+      :label="displayFieldlName"
       :placeholder="props.fieldPageGroup.field.placeholderText"
       :rules="
         type === 'Email' && required
@@ -212,7 +226,7 @@ onMounted(async () => {
   <div v-else-if="type === 'Number'">
     <v-text-field
       v-model="appFieldValue.fieldValueName"
-      :label="props.fieldPageGroup.field.name"
+      :label="displayFieldlName"
       :placeholder="props.fieldPageGroup.field.placeholderText"
       type="number"
       variant="outlined"
@@ -235,7 +249,7 @@ onMounted(async () => {
   <div v-else-if="type === 'Radio'">
     <v-radio-group
       v-model="appFieldValue.fieldValueName"
-      :label="props.fieldPageGroup.field.name"
+      :label="displayFieldlName"
       :rules="required ? rules.general : []"
       @update:modelValue="saveFieldValue"
     >

@@ -6,6 +6,7 @@ import { computed, onMounted, ref, watch } from "vue";
 const props = defineProps(["pageGroup", "applicationId"]);
 const emit = defineEmits(["revalidateApp"]);
 const pgComplete = ref([]);
+const numCol = ref("1");
 
 const revalidateGroup = (fieldPageGroupId, value, setNumber) => {
   for (let i = 0; i < props.pageGroup.numGroups; i++) {
@@ -84,22 +85,37 @@ watch(
       <div v-if="!pgComplete[index - 1]" class="mt-3 font-italic text-red">
         All required fields are not completed
       </div>
-      <v-row class="mt-3">
-        <v-col
-          cols="12"
-          md="4"
-          sm="6"
-          v-for="fieldPageGroup in props.pageGroup.fieldPageGroups"
-          :key="fieldPageGroup.id"
-        >
-          <StudentFieldEntry
-            :field-page-group="fieldPageGroup"
-            :applicationId="applicationId"
-            :set-number="index"
-            @updatedField="revalidateGroup"
-          />
-        </v-col>
-      </v-row>
+      <div v-if="props.pageGroup.displayType === 'Vertical'" class="mt-3">
+        <v-row v-for="fieldPageGroup in props.pageGroup.fieldPageGroups">
+          <v-col cols="12" md="4" sm="6">
+            <StudentFieldEntry
+              :key="fieldPageGroup.id"
+              :field-page-group="fieldPageGroup"
+              :applicationId="applicationId"
+              :set-number="index"
+              @updatedField="revalidateGroup"
+            />
+          </v-col>
+        </v-row>
+      </div>
+      <div v-if="props.pageGroup.displayType === 'Horizontal'" class="mt-3">
+        <v-row class="mt-3">
+          <v-col
+            cols="12"
+            md="4"
+            sm="6"
+            v-for="fieldPageGroup in props.pageGroup.fieldPageGroups"
+            :key="fieldPageGroup.id"
+          >
+            <StudentFieldEntry
+              :field-page-group="fieldPageGroup"
+              :applicationId="applicationId"
+              :set-number="index"
+              @updatedField="revalidateGroup"
+            />
+          </v-col>
+        </v-row>
+      </div>
     </v-card-text>
   </v-card>
   <v-btn

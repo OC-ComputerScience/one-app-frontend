@@ -4,6 +4,12 @@ import router from "./router.js";
 import vuetify from "./plugins/vuetify";
 import { loadFonts } from "./plugins/webfontloader";
 
+import JsonCSV from "vue-json-csv"; // @ts-ignore
+
 loadFonts();
 
-createApp(App).use(vuetify).use(router).mount("#app");
+const app = createApp(App)
+app.component("downloadCsv", JsonCSV);
+app.use(vuetify).use(router).mount("#app")
+
+
