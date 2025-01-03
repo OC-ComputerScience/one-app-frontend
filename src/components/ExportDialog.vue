@@ -168,7 +168,7 @@ const closeExportDialog = () => {
 
           <download-csv
             :data="json_data"
-            name="oneapp.csv"
+            name="app-data-oneapp.csv"
             :labels="json_headers"
             v-on:export-finished="exported"
           >
