@@ -29,7 +29,9 @@ const addNewPage = async () => {
     console.error(err);
     snackbarText.value = "Failed to add page";
   } finally {
-    activePage.value = pages[pages.length - 1];
+    activePage.value = pages.value[pages.value.length - 1];
+    console.log(pages);
+    console.log("addNewPage" + activePage.value);
     newPage.value = {};
     snackbar.value = true;
     emit("changeActivePage", activePage.value);

@@ -26,18 +26,24 @@ const forceUpdate = () => {
   pageKey.value += 1;
 };
 
-const changeActivePage = (newActivePage) => {
+const changeActivePage = async (newActivePage) => {
   activePage.value = newActivePage;
+  console.log("changeAP" + activePage.value);
+  await retrievePages(false);
   forceUpdate();
 };
 
 const deletePage = async (page) => {
   let index = pages.value.indexOf(page);
   pages.value.splice(index, 1);
-  activePage.value = pages.value[index - 1];
+  if (index > 0) activePage.value = pages.value[index - 1];
+  else if (pages.value.length > 0) activePage.value = pages.value[0];
+  else activePage.value = { pageGroups: [] };
+
   pages.value.forEach((page, i) => {
     page.pageSequence = i;
   });
+
   try {
     await Promise.all(
       pages.value.map((page) => PageServices.updatePages(page))
@@ -54,6 +60,7 @@ const deletePage = async (page) => {
 
 const updatePageSequence = async (newIndex, oldIndex) => {
   pages.value.splice(newIndex, 0, pages.value.splice(oldIndex, 1)[0]);
+
   pages.value.forEach((page, i) => {
     page.pageSequence = i;
   });
@@ -116,15 +123,19 @@ const updateGroupSequence = async (newIndex, oldIndex) => {
   }
 };
 
-const retrievePages = async () => {
+const retrievePages = async (updateActivePage) => {
   try {
     const response = await PageServices.getPages(formId);
     pages.value = response.data;
     pages.value.sort((a, b) => {
       return a.pageSequence - b.pageSequence;
     });
-    if (pages.value.length > 0) activePage.value = pages.value[0];
-    else activePage.value = { pageGroups: [] };
+    if (updateActivePage)
+      if (pages.value.length > 0) activePage.value = pages.value[0];
+      else activePage.value = { pageGroups: [] };
+    pages.value.forEach((page) => {
+      if (page.pageGroups == null) page.pageGroups = [];
+    });
 
     sortGroups();
   } catch (err) {
@@ -177,7 +188,7 @@ onMounted(async () => {
       console.error(err);
     });
 
-  await retrievePages();
+  await retrievePages(true);
 });
 </script>
 
