@@ -109,10 +109,10 @@ onMounted(async () => {
   type.value = props.fieldPageGroup.field.type;
   required.value = props.fieldPageGroup.field.isRequired;
   appFieldValue.value.fieldId = props.fieldPageGroup.field.id;
-  displayFieldlName.value = props.fieldPageGroup.field.name + " *";
+  displayFieldlName.value = props.fieldPageGroup.field.name;
 
   if (props.fieldPageGroup.field.isRequired) {
-    props.fieldPageGroup.field.name = props.fieldPageGroup.field.name + " *";
+    displayFieldlName.value = displayFieldlName.value + " *";
   }
 
   if (props.fieldPageGroup.field.appFieldValues.length > 0) {

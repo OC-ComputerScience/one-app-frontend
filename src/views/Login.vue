@@ -15,6 +15,10 @@ const changeLoginState = () => {
 const changeSignupState = () => {
   showSignup.value = !showSignup.value;
 };
+const closeLogin = () => {
+  showLogin.value = false;
+  showSignup.value = false;
+};
 
 onMounted(() => {
   store.commit("removeLoginUser");
@@ -78,10 +82,7 @@ onMounted(() => {
       />
     </v-dialog>
     <v-dialog v-model="showLogin" max-width="600px">
-      <LoginDialog
-        :displayLoginFirst="true"
-        @close-dialog="changeSignupState"
-      />
+      <LoginDialog :displayLoginFirst="true" @close-dialog="closeLogin" />
     </v-dialog>
   </div>
 </template>
