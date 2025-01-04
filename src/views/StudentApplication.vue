@@ -172,7 +172,7 @@ const validatePages = () => {
   if (application.value == null) {
     return;
   }
-
+  console.log("validating pages");
   application.value.isComplete = true;
   pages.value.forEach((page) => {
     page.pageGroups.forEach((group) => {
