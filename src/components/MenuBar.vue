@@ -72,14 +72,21 @@ function logout() {
       <div class="text-h5">{{ title }}</div>
       <v-spacer></v-spacer>
       <div v-if="user">
-        <div v-if="user.role === 'Admin'">
+        <div v-if="user.role === 'Admin' && user.status === 'active'">
           <v-btn class="mx-2" :to="{ name: 'formList' }"> Forms </v-btn>
           <v-btn class="mx-2" :to="{ name: 'userList' }"> Users </v-btn>
           <v-btn class="mx-2" :to="{ name: 'universityList' }">
             Universities
           </v-btn>
         </div>
-        <div v-else-if="user.role === 'Student' && !appComplete">
+        <div v-else-if="user.role === 'University' && user.status === 'active'">
+          <v-btn class="mx-2" :to="{ name: 'formList' }"> Forms </v-btn>
+        </div>
+        <div
+          v-else-if="
+            user.role === 'Student' && !appComplete && user.status === 'active'
+          "
+        >
           <v-btn class="mx-2" :to="{ name: 'application' }">
             Application
           </v-btn>
