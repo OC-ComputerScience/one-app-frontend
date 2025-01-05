@@ -128,6 +128,11 @@ const closeExportDialog = () => {
       <v-card>
         <v-card-title>Download Form Data</v-card-title>
         <v-card-subtitle>Download for: {{ formData.name }}</v-card-subtitle>
+        <v-card-text>
+          This will export the data from applications submitted since 12:00 am
+          of the Since Date. This will only export application data for
+          applications that have been submitted.
+        </v-card-text>
         <v-form v-model="validForm">
           <v-card-text class="mt-2 mb-n4">
             <v-date-input

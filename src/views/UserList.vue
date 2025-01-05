@@ -17,14 +17,18 @@ const json_headers = {
   roleName: "Role",
 };
 const json_fields = ["firstName", "lastName", "email", "roleName"];
+const status = ["active", "inactive"];
 
 const message = ref("Update user role");
 
-const updateRole = (user) => {
-  user.roleId = user.role.type.id;
+const update = (user) => {
+  let updatedUser = {};
+
+  updatedUser.typeId = user.role.type.id;
+  updatedUser.id = user.id;
+  updatedUser.status = user.status;
   user.roleName = user.role.type.type;
-  console.log(user);
-  UserServices.updateUser(user);
+  UserServices.updateUser(updatedUser);
 };
 
 const deleteUser = (user) => {
@@ -121,6 +125,7 @@ retrieveUsers();
               <th class="text-left">First Name</th>
               <th class="text-left">Last Name</th>
               <th class="text-left">Email</th>
+              <th class="text-left">Status</th>
               <th class="text-left">Role</th>
             </tr>
           </thead>
@@ -129,13 +134,23 @@ retrieveUsers();
               <td>{{ user.firstName }}</td>
               <td>{{ user.lastName }}</td>
               <td>{{ user.email }}</td>
-              <v-combobox
-                density="comfortable"
-                v-model="user.role.type"
-                :items="roles"
-                item-title="type"
-                @update:modelValue="updateRole(user)"
-              ></v-combobox>
+              <td>
+                <v-combobox
+                  density="comfortable"
+                  v-model="user.status"
+                  :items="status"
+                  @update:modelValue="update(user)"
+                ></v-combobox>
+              </td>
+              <td>
+                <v-combobox
+                  density="comfortable"
+                  v-model="user.role.type"
+                  :items="roles"
+                  item-title="type"
+                  @update:modelValue="update(user)"
+                ></v-combobox>
+              </td>
             </tr>
           </tbody>
         </v-table>

@@ -7,7 +7,6 @@ const showLogin = ref(false);
 const showSignup = ref(false);
 
 store.commit("removeLoginUser");
-store.commit("setLoginUser", null);
 
 const changeLoginState = () => {
   showLogin.value = !showLogin.value;
@@ -22,7 +21,6 @@ const closeLogin = () => {
 
 onMounted(() => {
   store.commit("removeLoginUser");
-  store.commit("setLoginUser", null);
 });
 </script>
 
