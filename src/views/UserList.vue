@@ -14,9 +14,30 @@ const json_headers = {
   firstName: "First Name",
   lastName: "Last Name",
   email: "Email",
+  phone: "Phone",
+  streetAddress: "Street Address",
+  city: "City",
+  state: "State",
+  zip: "Zip",
+  congregation: "Congregation",
+  howHeard: "How Heard",
+  hsgradyear: "HS Grad Year",
   roleName: "Role",
 };
-const json_fields = ["firstName", "lastName", "email", "roleName"];
+
+const json_fields = [
+  "firstName",
+  "lastName",
+  "email",
+  "phone",
+  "city",
+  "state",
+  "zip",
+  "congregation",
+  "howHeard",
+  "hsgradyear",
+  "roleName",
+];
 const status = ["active", "inactive"];
 
 const message = ref("Update user role");
