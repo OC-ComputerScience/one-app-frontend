@@ -13,6 +13,7 @@ const props = defineProps(["displayLoginFirst"]);
 const router = useRouter();
 const agree = ref(false);
 var howHeard = ["Church", "Family", "Social Media", "Internet Search", "Other"];
+var hsgradyear = ["2025", "2026", "2027", "2028", "2029", "2030"];
 const roles = ref([]);
 const universities = ref([]);
 const login = ref(props.displayLoginFirst);
@@ -43,6 +44,7 @@ const user = ref({
   salt: "",
   roleId: 2,
   universityId: null,
+  hsgradyear: null,
 });
 const errorMessage = ref("");
 const confirmPassword = ref("");
@@ -130,7 +132,6 @@ onMounted(async () => {
         <v-card-text>
           <v-form v-model="validForm">
             <v-autocomplete
-              class="mt-2"
               v-if="!login"
               v-model="user.roleId"
               :items="roles"
@@ -144,18 +145,17 @@ onMounted(async () => {
             ></v-autocomplete>
             <v-autocomplete
               v-if="!login && user.roleId == 3"
-              class="mt-2"
               v-model="user.universityId"
               :items="universities"
               item-title="name"
               item-value="id"
-              label="University"
+              label="University Name"
               variant="outlined"
               density="compact"
               :rules="[rules.required]"
             ></v-autocomplete>
-            <v-row v-if="!login" class="my-0">
-              <v-col cols="5">
+            <v-row dense v-if="!login">
+              <v-col cols="6">
                 <v-text-field
                   v-model="user.firstName"
                   label="First Name"
@@ -164,7 +164,7 @@ onMounted(async () => {
                   :rules="[rules.required]"
                 />
               </v-col>
-              <v-col cols="5">
+              <v-col cols="6">
                 <v-text-field
                   v-model="user.lastName"
                   label="Last Name"
@@ -176,7 +176,6 @@ onMounted(async () => {
             </v-row>
 
             <v-text-field
-              class="mt-2"
               v-if="!login && user.roleId == 2"
               v-model="user.streetAddress"
               label="Street Address"
@@ -185,10 +184,10 @@ onMounted(async () => {
               :rules="[rules.required]"
             />
 
-            <v-row v-if="!login && user.roleId == 2" class="my-0">
+            <v-row dense v-if="!login && user.roleId == 2">
               <v-col cols="6">
                 <v-text-field
-                  class="mt-2"
+                  class="md-4"
                   v-model="user.city"
                   label="City"
                   variant="outlined"
@@ -198,7 +197,6 @@ onMounted(async () => {
               </v-col>
               <v-col cols="3">
                 <v-autocomplete
-                  class="mt-2"
                   v-model="user.state"
                   :items="states.states"
                   label="State"
@@ -212,7 +210,7 @@ onMounted(async () => {
               </v-col>
               <v-col cols="3">
                 <v-text-field
-                  class="mt-2"
+                  class="md-4"
                   v-model="user.zip"
                   label="Zip Code"
                   variant="outlined"
@@ -221,10 +219,10 @@ onMounted(async () => {
                 />
               </v-col>
             </v-row>
-            <v-row class="my-0">
-              <v-col cols="6">
+            <v-row dense>
+              <v-col v-if="login" cols="12">
                 <v-text-field
-                  class="mt-2"
+                  class=""
                   v-model="user.email"
                   label="Email"
                   variant="outlined"
@@ -234,7 +232,17 @@ onMounted(async () => {
               </v-col>
               <v-col v-if="!login" cols="6">
                 <v-text-field
-                  class="mt-2"
+                  class=""
+                  v-model="user.email"
+                  label="Email"
+                  variant="outlined"
+                  density="compact"
+                  :rules="[rules.required, rules.email]"
+                />
+              </v-col>
+              <v-col v-if="!login" cols="6">
+                <v-text-field
+                  class="ma-0 pa-0"
                   v-if="!login"
                   v-model="user.phone"
                   label="Phone"
@@ -244,21 +252,29 @@ onMounted(async () => {
                 />
               </v-col>
             </v-row>
-            <v-row class="my-0">
+            <v-text-field
+              v-if="!login && user.roleId == 2"
+              v-model="user.congregation"
+              label="Church congregation you attend"
+              variant="outlined"
+              density="compact"
+              :rules="[rules.required]"
+            />
+
+            <v-row dense>
               <v-col cols="6">
-                <v-text-field
-                  class="mt-2"
+                <v-autocomplete
                   v-if="!login && user.roleId == 2"
-                  v-model="user.congregation"
-                  label="Church congregation you attend"
+                  v-model="user.hsgradyear"
+                  :items="hsgradyear"
+                  label="HS Grad Year"
                   variant="outlined"
                   density="compact"
                   :rules="[rules.required]"
-                />
+                ></v-autocomplete>
               </v-col>
               <v-col cols="6">
                 <v-autocomplete
-                  class="mt-2"
                   v-if="!login && user.roleId == 2"
                   v-model="user.howHeard"
                   :items="howHeard"
@@ -269,10 +285,10 @@ onMounted(async () => {
                 ></v-autocomplete>
               </v-col>
             </v-row>
-            <v-row class="my-0">
-              <v-col cols="6">
+            <v-row dense>
+              <v-col cols="12">
                 <v-text-field
-                  class="mt-2"
+                  v-if="login"
                   v-model="user.password"
                   label="Password"
                   variant="outlined"
@@ -283,7 +299,17 @@ onMounted(async () => {
               </v-col>
               <v-col cols="6">
                 <v-text-field
-                  class="mt-2"
+                  v-if="!login"
+                  v-model="user.password"
+                  label="Password"
+                  variant="outlined"
+                  density="compact"
+                  type="password"
+                  :rules="[rules.required]"
+                />
+              </v-col>
+              <v-col cols="6">
+                <v-text-field
                   v-if="!login"
                   v-model="confirmPassword"
                   label="Confirm Password"
@@ -296,7 +322,6 @@ onMounted(async () => {
             </v-row>
             <v-checkbox
               v-if="!login && user.roleId == 2"
-              class="mt-2"
               v-model="agree"
               label="I agree for CHEF to share my data with partner universities."
               :rules="[rules.required]"
@@ -304,10 +329,10 @@ onMounted(async () => {
             </v-checkbox>
           </v-form>
         </v-card-text>
-        <v-card-text align="center" class="text-red mx-2 mb-2">{{
+        <v-card-text align="center" class="text-red">{{
           errorMessage
         }}</v-card-text>
-        <v-card-actions align="right" class="mr-2">
+        <v-card-actions align="right">
           <v-btn
             variant="plain"
             elevation="0"
