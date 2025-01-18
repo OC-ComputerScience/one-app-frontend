@@ -11,9 +11,7 @@ import store from "./store/store"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  scrollBehavior() {
-    return { top: 0, left: 0 }
-  },
+
   routes: [
     {
       path: "/",
@@ -73,6 +71,9 @@ const router = createRouter({
       component: UserList
     }
   ],
+  scrollBehavior() {
+    return { top: 0, left: 0 }
+  },
 });
 
 
