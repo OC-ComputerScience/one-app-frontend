@@ -3,14 +3,16 @@ import states from "../../config/states";
 import countries from "../../config/countries";
 import majors from "../../config/majors";
 import AppFieldValueServices from "../../services/AppFieldValueServices";
+import { watch } from "vue";
 //import { VDateInput } from "vuetify/labs/VDateInput";
-import { ref, defineEmits, onMounted } from "vue";
+import { ref, defineEmits, onBeforeUpdate, onMounted } from "vue";
 
 const props = defineProps(["fieldPageGroup", "applicationId", "setNumber"]);
 
 const emits = defineEmits(["updatedField"]);
 
 const appFieldValue = ref({
+  id: null,
   applicationId: props.applicationId,
   setNumber: props.setNumber,
   fieldId: null,
@@ -82,6 +84,8 @@ const saveFieldValue = async () => {
 
 const saveNewFieldValue = async () => {
   try {
+    appFieldValue.value.applicationId = props.applicationId;
+    appFieldValue.value.fieldId = props.fieldPageGroup.field.id;
     const response = await AppFieldValueServices.addAppFieldValues(
       appFieldValue.value
     );
@@ -105,10 +109,10 @@ const updateFieldValue = async () => {
   }
 };
 
-onMounted(async () => {
+const initializeAppFieldValue = () => {
   type.value = props.fieldPageGroup.field.type;
   required.value = props.fieldPageGroup.field.isRequired;
-  appFieldValue.value.fieldId = props.fieldPageGroup.field.id;
+  appFieldValue.value.fieldId = props.fieldPageGroup.fieldId;
   displayFieldlName.value = props.fieldPageGroup.field.name;
 
   if (props.fieldPageGroup.field.isRequired) {
@@ -122,6 +126,7 @@ onMounted(async () => {
       }
     );
     if (value) appFieldValue.value = value;
+    console.log("appFieldValue=" + appFieldValue.value);
   }
   if (type.value === "Dropdown" || type.value === "Radio") {
     fieldValues.value = props.fieldPageGroup.field.fieldValues;
@@ -146,10 +151,22 @@ onMounted(async () => {
     if (appFieldValue.value.fieldValueName == "") dateFieldValue.value = null;
     else dateFieldValue.value = new Date(appFieldValue.value.fieldValueName);
   }
+};
+watch(
+  () => props.fieldPageGroup,
+  (first, second) => {
+    initializeAppFieldValue();
+  },
+  { deep: true }
+);
+
+onMounted(() => {
+  initializeAppFieldValue();
 });
 </script>
 
 <template>
+  {{ props.setNumber }} - {{ appFieldValue.applicationId }}
   <div v-if="type === 'Checkbox'" class="mt-n2">
     <v-checkbox
       v-model="appFieldValue.fieldValueName"
