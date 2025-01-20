@@ -1,4 +1,5 @@
 <script setup>
+import store from "../../store/store";
 import states from "../../config/states";
 import countries from "../../config/countries";
 import majors from "../../config/majors";
@@ -6,6 +7,7 @@ import AppFieldValueServices from "../../services/AppFieldValueServices";
 import { watch } from "vue";
 //import { VDateInput } from "vuetify/labs/VDateInput";
 import { ref, defineEmits, onBeforeUpdate, onMounted } from "vue";
+import UserServices from "../../services/UserServices";
 
 const props = defineProps(["fieldPageGroup", "applicationId", "setNumber"]);
 
@@ -25,6 +27,9 @@ const dateFieldValue = ref(null);
 const type = ref("");
 const required = ref(false);
 const displayFieldlName = ref("");
+const user = ref(null);
+
+user.value = store.getters.getUser;
 
 const rules = {
   email: [
@@ -109,6 +114,33 @@ const updateFieldValue = async () => {
   }
 };
 
+const getFieldDefaultValue = () => {
+  if (props.fieldPageGroup.field.defaultField == null) return null;
+  try {
+    if (props.fieldPageGroup.field.defaultField === "First Name") {
+      return user.value.firstName;
+    } else if (props.fieldPageGroup.field.defaultField === "Last Name") {
+      return user.value.lastName;
+    } else if (props.fieldPageGroup.field.defaultField === "Email") {
+      return user.value.email;
+    } else if (props.fieldPageGroup.field.defaultField === "Phone Number") {
+      return user.value.phone;
+    } else if (props.fieldPageGroup.field.defaultField === "Street Address") {
+      return user.value.streetAddress;
+    } else if (props.fieldPageGroup.field.defaultField === "City") {
+      return user.value.city;
+    } else if (props.fieldPageGroup.field.defaultField === "Zip Code") {
+      return user.value.zip;
+    } else if (props.fieldPageGroup.field.defaultField === "Graduation Year") {
+      return user.value.hsgradyear;
+    } else if (props.fieldPageGroup.field.defaultField === "State") {
+      return user.value.state;
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 const initializeAppFieldValue = () => {
   type.value = props.fieldPageGroup.field.type;
   required.value = props.fieldPageGroup.field.isRequired;
@@ -118,14 +150,38 @@ const initializeAppFieldValue = () => {
   if (props.fieldPageGroup.field.isRequired) {
     displayFieldlName.value = displayFieldlName.value + " *";
   }
+  if (
+    props.fieldPageGroup.field.defaultField !== null &&
+    props.fieldPageGroup.field.appFieldValues.length === 0 &&
+    (appFieldValue.value.fieldValueName === "" ||
+      appFieldValue.value.fieldValueName === null)
+  ) {
+    appFieldValue.value.fieldValueName = getFieldDefaultValue();
+    let defaultFieldValue = null;
+    if (type.value === "Dropdown" || type.value === "Radio") {
+      defaultFieldValue = props.fieldPageGroup.field.fieldValues.find(
+        (fieldValue) => {
+          return fieldValue.value === appFieldValue.value.fieldValueName;
+        }
+      );
+      if (defaultFieldValue !== null)
+        appFieldValue.value.fieldValueId = defaultFieldValue.id;
+    }
+    // save default value to database
+    saveFieldValue();
+  }
 
   if (props.fieldPageGroup.field.appFieldValues.length > 0) {
+    console.log("get prev appFieldValues");
     let value = props.fieldPageGroup.field.appFieldValues.find(
       (appFieldValue) => {
         return appFieldValue.setNumber === props.setNumber;
       }
     );
+
     if (value) appFieldValue.value = value;
+  } else {
+    appFieldValue.value.setNumber = props.setNumber;
   }
   if (type.value === "Dropdown" || type.value === "Radio") {
     fieldValues.value = props.fieldPageGroup.field.fieldValues;
