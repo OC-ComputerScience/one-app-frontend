@@ -6,7 +6,7 @@ import RoleServices from "../services/RoleServices";
 import UniversityServices from "../services/UniversityServices";
 import store from "../store/store";
 import states from "../config/states";
-console.log(states);
+
 const emit = defineEmits(["closeDialog"]);
 const props = defineProps(["displayLoginFirst"]);
 

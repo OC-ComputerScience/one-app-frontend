@@ -45,8 +45,8 @@ const rules = {
 };
 
 const changeFieldValue = (value) => {
-  appFieldValue.value.fieldValueId = value.id;
-  appFieldValue.value.fieldValueName = value.value;
+  appFieldValue.value.fieldValueId = value ? value.id : null;
+  appFieldValue.value.fieldValueName = value ? value.value : null;
 };
 const changeAutoListFieldValue = (value) => {
   if (value == null) {
@@ -126,7 +126,6 @@ const initializeAppFieldValue = () => {
       }
     );
     if (value) appFieldValue.value = value;
-    console.log("appFieldValue=" + appFieldValue.value);
   }
   if (type.value === "Dropdown" || type.value === "Radio") {
     fieldValues.value = props.fieldPageGroup.field.fieldValues;
@@ -166,7 +165,6 @@ onMounted(() => {
 </script>
 
 <template>
-  {{ props.setNumber }} - {{ appFieldValue.applicationId }}
   <div v-if="type === 'Checkbox'" class="mt-n2">
     <v-checkbox
       v-model="appFieldValue.fieldValueName"
@@ -187,7 +185,8 @@ onMounted(() => {
     ></v-date-input>
   </div>
   <div v-else-if="type === 'Dropdown'">
-    <v-autocomplete
+    <v-select
+      clearable
       v-model="selectedFieldValue"
       :items="fieldValues"
       :label="displayFieldlName"
@@ -199,10 +198,11 @@ onMounted(() => {
       @update:modelValue="changeFieldValue(selectedFieldValue)"
       v-on:blur="saveFieldValue()"
       :rules="required ? rules.general : []"
-    ></v-autocomplete>
+    ></v-select>
   </div>
   <div v-else-if="type === 'State' || type === 'Country' || type === 'Major'">
-    <v-autocomplete
+    <v-select
+      clearable
       v-model="selectedFieldValue"
       :items="fieldValues"
       :label="displayFieldlName"
@@ -214,7 +214,7 @@ onMounted(() => {
       @update:modelValue="changeAutoListFieldValue(selectedFieldValue)"
       v-on:blur="saveFieldValue()"
       :rules="required ? rules.general : []"
-    ></v-autocomplete>
+    ></v-select>
   </div>
   <div
     v-else-if="type === 'Email' || type === 'Phone Number' || type === 'Text'"

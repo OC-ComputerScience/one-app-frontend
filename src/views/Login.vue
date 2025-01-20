@@ -73,7 +73,12 @@ onMounted(() => {
       </v-row>
     </v-container>
 
-    <v-dialog v-model="showSignup" max-width="600px">
+    <v-dialog
+      v-model="showSignup"
+      max-width="600px"
+      max-height="400px"
+      scrollable
+    >
       <LoginDialog
         :displayLoginFirst="false"
         @close-dialog="changeSignupState"
