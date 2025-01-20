@@ -17,11 +17,11 @@ const findSetNumber = (index) => {
   try {
     let setNumber =
       props.pageGroup.fieldPageGroups[0].field.appFieldValues[index].setNumber;
-    console.log("setNumber=" + setNumber);
+
     return setNumber;
   } catch (error) {
-    console.log(error);
-    console.log("Error in findSetNumber=1");
+    console.log("error in findSetNumber");
+
     return 1;
   }
 
@@ -77,8 +77,7 @@ const revalidateGroup = (fieldPageGroupId, value, setNumber) => {
 const canAddGroups = computed(() => {
   let isLessThanMax = props.pageGroup.numGroups < props.pageGroup.maxSetCount;
   let isAtLeastMin = props.pageGroup.numGroups >= props.pageGroup.minSetCount;
-  console.log(props.pageGroup.numGroups);
-  console.log(props.pageGroup.maxSetCount);
+
   return isLessThanMax && isAtLeastMin;
 });
 
@@ -113,8 +112,7 @@ const removePageGroup = async (index) => {
       setNumber
     );
   });
-  console.log("removePageGroup");
-  console.log(props.pageGroup);
+
   props.pageGroup.numGroups--;
 };
 

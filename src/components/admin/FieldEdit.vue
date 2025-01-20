@@ -29,6 +29,17 @@ const fieldTypes = ref([
   "State",
   "Text",
 ]);
+const defaultFields = ref([
+  "First Name",
+  "Last Name",
+  "Email",
+  "Phone Number",
+  "Street Address",
+  "City",
+  "State",
+  "Zip Code",
+  "Graduation Year",
+]);
 
 const closeDialog = () => {
   emits("closeDialog");
@@ -147,6 +158,12 @@ onMounted(async () => {
           label="Required"
           v-model="props.field.isRequired"
         ></v-checkbox>
+        <v-checkbox
+          color="primary"
+          class="mt-n4"
+          label="Encrypted"
+          v-model="props.field.isEncrypted"
+        ></v-checkbox>
         <v-autocomplete
           class="mt-n4 mb-2"
           label="Field Type*"
@@ -157,6 +174,14 @@ onMounted(async () => {
           :rules="[(v) => !!v || 'Field type is required']"
           required
           @update:modelValue="checkFieldType"
+        ></v-autocomplete>
+        <v-autocomplete
+          class="mt-n4 mb-2"
+          label="Default Field"
+          variant="outlined"
+          v-model="props.field.defaultField"
+          density="compact"
+          :items="defaultFields"
         ></v-autocomplete>
         <div v-if="showFieldValues">
           <v-row

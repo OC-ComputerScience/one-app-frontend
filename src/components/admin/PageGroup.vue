@@ -23,6 +23,8 @@ const activeField = ref({
   type: "",
   placeholderText: "",
   isRequired: false,
+  isEncrypted: false,
+  defaultValue: "",
 });
 
 const groupSequences = computed(() => {
@@ -152,6 +154,8 @@ const closeFieldDialog = () => {
     placeholderText: "",
     fieldSequence: null,
     isRequired: false,
+    isEncrypted: false,
+    defaultValue: "",
   };
   newFieldDialog.value = false;
 };
