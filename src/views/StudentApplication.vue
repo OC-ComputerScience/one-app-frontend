@@ -44,6 +44,10 @@ const forceUpdate = async () => {
   pageKey.value += 1;
   setNavButtons();
 };
+const revalidateApp = async () => {
+  validatePages();
+  setNavButtons();
+};
 
 const changeActivePage = (page) => {
   activePage.value = page;
@@ -122,7 +126,7 @@ const createApplication = async () => {
     .then((response) => {
       application.value = response.data;
       application.value.isComplete = false;
-      appId.value = response.data.id;
+      appId.value = application.value.id;
     })
     .catch((err) => {
       console.error(err);
@@ -152,6 +156,11 @@ const retrievePages = async (setActive) => {
         group.fieldPageGroups.sort((a, b) => {
           return a.sequenceNumber - b.sequenceNumber;
         });
+        group.fieldPageGroups.forEach((fpg) => {
+          fpg.field.appFieldValues.sort((a, b) => {
+            return a.setNumber - b.setNumber;
+          });
+        });
       });
     });
     if (setActive) {
@@ -172,7 +181,7 @@ const validatePages = () => {
   if (application.value == null) {
     return;
   }
-  console.log("validating pages");
+
   application.value.isComplete = true;
   pages.value.forEach((page) => {
     page.pageGroups.forEach((group) => {
@@ -196,7 +205,6 @@ const validatePages = () => {
       });
     });
   });
-  console.log("app complete =" + application.value.isComplete);
 };
 
 const submitDisabled = () => {
@@ -232,7 +240,7 @@ onMounted(async () => {
       <StudentPageGroup
         :applicationId="appId"
         :page-group="pageGroup"
-        @revalidateApp="validatePages"
+        @revalidateApp="revalidateApp"
       />
       <div
         v-for="pageGroup in activePage.pageGroups"

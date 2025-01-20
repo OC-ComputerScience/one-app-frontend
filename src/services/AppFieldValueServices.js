@@ -16,4 +16,7 @@ export default {
   deleteAppFieldValues(id) {
     return apiClient.delete("appFieldValues/" + id);
   },
+  deleteAppFieldValuesForAppSet(fieldId, applicationId, setNumber) {
+    return apiClient.delete("appFieldValues/"+fieldId+"/app/"+applicationId+"/set/"+setNumber);
+  },
 };

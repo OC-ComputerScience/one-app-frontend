@@ -73,14 +73,24 @@ onMounted(() => {
       </v-row>
     </v-container>
 
-    <v-dialog v-model="showSignup" max-width="600px">
+    <v-dialog
+      v-model="showSignup"
+      max-width="600px"
+      content-class="my-custom-dialog"
+    >
       <LoginDialog
         :displayLoginFirst="false"
         @close-dialog="changeSignupState"
       />
     </v-dialog>
-    <v-dialog v-model="showLogin" max-width="600px">
+    <v-dialog v-model="showLogin" max-width="800px">
       <LoginDialog :displayLoginFirst="true" @close-dialog="closeLogin" />
     </v-dialog>
   </div>
 </template>
+
+<style scoped>
+>>> .my-custom-dialog {
+  align-self: flex-end;
+}
+</style>

@@ -6,7 +6,7 @@ import RoleServices from "../services/RoleServices";
 import UniversityServices from "../services/UniversityServices";
 import store from "../store/store";
 import states from "../config/states";
-console.log(states);
+
 const emit = defineEmits(["closeDialog"]);
 const props = defineProps(["displayLoginFirst"]);
 
@@ -128,7 +128,7 @@ onMounted(async () => {
     <v-container>
       <v-card>
         <v-card-title>{{ cardTitle }}</v-card-title>
-
+        <v-divider class="mt-3"></v-divider>
         <v-card-text>
           <v-form v-model="validForm">
             <v-autocomplete
@@ -332,6 +332,7 @@ onMounted(async () => {
         <v-card-text align="center" class="text-red">{{
           errorMessage
         }}</v-card-text>
+        <v-divider class="mt-3"></v-divider>
         <v-card-actions align="right">
           <v-btn
             variant="plain"
