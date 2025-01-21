@@ -5,7 +5,7 @@ import countries from "../../config/countries";
 import majors from "../../config/majors";
 import AppFieldValueServices from "../../services/AppFieldValueServices";
 import { watch } from "vue";
-//import { VDateInput } from "vuetify/labs/VDateInput";
+import { vMaska } from "maska/vue";
 import { ref, defineEmits, onBeforeUpdate, onMounted } from "vue";
 import UserServices from "../../services/UserServices";
 
@@ -36,12 +36,7 @@ const rules = {
     (v) => !!v || "Email is required",
     (v) => /.+@.+\..+/.test(v) || "Email must be valid",
   ],
-  phone: [
-    (v) => !!v || "Phone number is required",
-    (v) =>
-      /^\+?[\d\s-]{10,}$/.test(v) ||
-      "Phone number must be valid (minimum 10 digits)",
-  ],
+
   text: [
     (v) => !!v || "This field is required",
     (v) => (v && v.length <= 100) || "Text must be less than 100 characters",
@@ -272,9 +267,7 @@ onMounted(() => {
       :rules="required ? rules.general : []"
     ></v-select>
   </div>
-  <div
-    v-else-if="type === 'Email' || type === 'Phone Number' || type === 'Text'"
-  >
+  <div v-else-if="type === 'Email' || type === 'Text'">
     <v-text-field
       v-model="appFieldValue.fieldValueName"
       :label="displayFieldlName"
@@ -288,9 +281,20 @@ onMounted(() => {
           ? rules.text
           : []
       "
-      :type="
-        type === 'Email' ? 'email' : type === 'Phone Number' ? 'tel' : 'text'
-      "
+      :type="type === 'Email' ? 'email' : 'text'"
+      variant="outlined"
+      density="compact"
+      v-on:blur="saveFieldValue"
+    ></v-text-field>
+  </div>
+  <div v-else-if="type === 'Phone Number'">
+    <v-text-field
+      v-model="appFieldValue.fieldValueName"
+      :label="displayFieldlName"
+      v-maska="'(###) ###-####'"
+      :placeholder="props.fieldPageGroup.field.placeholderText"
+      :rules="[required]"
+      type="tel"
       variant="outlined"
       density="compact"
       v-on:blur="saveFieldValue"
