@@ -6,6 +6,7 @@ import RoleServices from "../services/RoleServices";
 import UniversityServices from "../services/UniversityServices";
 import store from "../store/store";
 import states from "../config/states";
+import { vMaska } from "maska/vue";
 
 const emit = defineEmits(["closeDialog"]);
 const props = defineProps(["displayLoginFirst"]);
@@ -18,6 +19,13 @@ const roles = ref([]);
 const universities = ref([]);
 const login = ref(props.displayLoginFirst);
 const validForm = ref(false);
+
+const validate = () => {
+  loginForm.value.validate().then((valid) => {
+    if (!valid.valid)
+      errorMessage.value = "Errors in the form. Please correct.";
+  });
+};
 
 const cardTitle = computed(() => {
   return login.value ? "Log In to OneApp" : "Sign Up for OneApp";
@@ -49,15 +57,30 @@ const user = ref({
 const errorMessage = ref("");
 const confirmPassword = ref("");
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const phoneRegex = /^\(\d{3}\) \d{3}-\d{4}$/;
 const rules = {
   required: (value) => !!value || "Required.",
   email: (value) => emailRegex.test(value) || "Invalid Email",
+  phone: (value) => value.length == 14 || "Invalid Phone Number",
   passwordCheck: (value) =>
     user.value.password === value || "Password does not match",
+  passwordLength: (value) =>
+    value.length >= 8 || "Password must be at least 8 characters",
 };
+const loginForm = ref(null); // form reference
 
 const signIn = async () => {
+  let validCheck = true;
   errorMessage.value = "";
+  await loginForm.value.validate().then(async (valid) => {
+    if (!valid.valid) {
+      errorMessage.value = "Errors in the form. Please correct.";
+      validCheck = false;
+    }
+  });
+  console.log(validCheck);
+  if (!validCheck) return;
+
   store.commit("removeLoginUser");
 
   if (login.value) {
@@ -130,7 +153,7 @@ onMounted(async () => {
         <v-card-title>{{ cardTitle }}</v-card-title>
         <v-divider class="mt-3"></v-divider>
         <v-card-text>
-          <v-form v-model="validForm">
+          <v-form ref="loginForm" v-model="validForm">
             <v-autocomplete
               v-if="!login"
               v-model="user.roleId"
@@ -196,7 +219,7 @@ onMounted(async () => {
                 />
               </v-col>
               <v-col cols="3">
-                <v-autocomplete
+                <v-select
                   v-model="user.state"
                   :items="states.states"
                   label="State"
@@ -206,7 +229,7 @@ onMounted(async () => {
                   variant="outlined"
                   density="compact"
                   :rules="[rules.required]"
-                ></v-autocomplete>
+                ></v-select>
               </v-col>
               <v-col cols="3">
                 <v-text-field
@@ -244,11 +267,12 @@ onMounted(async () => {
                 <v-text-field
                   class="ma-0 pa-0"
                   v-if="!login"
+                  v-maska="'(###) ###-####'"
                   v-model="user.phone"
                   label="Phone"
                   variant="outlined"
                   density="compact"
-                  :rules="[rules.required]"
+                  :rules="[rules.required, rules.phone]"
                 />
               </v-col>
             </v-row>
@@ -294,7 +318,7 @@ onMounted(async () => {
                   variant="outlined"
                   density="compact"
                   type="password"
-                  :rules="[rules.required]"
+                  :rules="[rules.required, rules.passwordLength]"
                 />
               </v-col>
               <v-col cols="6">
@@ -305,7 +329,7 @@ onMounted(async () => {
                   variant="outlined"
                   density="compact"
                   type="password"
-                  :rules="[rules.required]"
+                  :rules="[rules.required, rules.passwordLength]"
                 />
               </v-col>
               <v-col cols="6">
@@ -344,6 +368,16 @@ onMounted(async () => {
             Cancel
           </v-btn>
           <v-spacer></v-spacer>
+          <v-btn
+            variant="outlined"
+            elevation="0"
+            density="comfortable"
+            @click="validate"
+            color="primary"
+          >
+            Validate
+          </v-btn>
+
           <v-btn
             variant="outlined"
             elevation="0"
