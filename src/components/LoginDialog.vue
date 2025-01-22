@@ -318,7 +318,7 @@ onMounted(async () => {
                   variant="outlined"
                   density="compact"
                   type="password"
-                  :rules="[rules.required, rules.passwordLength]"
+                  :rules="[rules.required]"
                 />
               </v-col>
               <v-col cols="6">
