@@ -368,15 +368,6 @@ onMounted(async () => {
             Cancel
           </v-btn>
           <v-spacer></v-spacer>
-          <v-btn
-            variant="outlined"
-            elevation="0"
-            density="comfortable"
-            @click="validate"
-            color="primary"
-          >
-            Validate
-          </v-btn>
 
           <v-btn
             variant="outlined"
