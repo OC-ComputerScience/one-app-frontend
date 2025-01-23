@@ -78,7 +78,7 @@ const signIn = async () => {
       validCheck = false;
     }
   });
-  console.log(validCheck);
+
   if (!validCheck) return;
 
   store.commit("removeLoginUser");
@@ -118,7 +118,7 @@ const signIn = async () => {
           router.push({ name: "home" });
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
           errorMessage.value = err.response.data.message;
         });
     } catch (err) {
@@ -318,7 +318,7 @@ onMounted(async () => {
                   variant="outlined"
                   density="compact"
                   type="password"
-                  :rules="[rules.required, rules.passwordLength]"
+                  :rules="[rules.required]"
                 />
               </v-col>
               <v-col cols="6">

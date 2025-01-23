@@ -4,7 +4,7 @@ import states from "../../config/states";
 import countries from "../../config/countries";
 import majors from "../../config/majors";
 import AppFieldValueServices from "../../services/AppFieldValueServices";
-import { watch } from "vue";
+import { onUpdated, watch } from "vue";
 import { vMaska } from "maska/vue";
 import { ref, defineEmits, onBeforeUpdate, onMounted } from "vue";
 import UserServices from "../../services/UserServices";
@@ -136,7 +136,7 @@ const getFieldDefaultValue = () => {
   }
 };
 
-const initializeAppFieldValue = () => {
+const initializeAppFieldValue = async () => {
   type.value = props.fieldPageGroup.field.type;
   required.value = props.fieldPageGroup.field.isRequired;
   appFieldValue.value.fieldId = props.fieldPageGroup.fieldId;
@@ -162,21 +162,21 @@ const initializeAppFieldValue = () => {
       if (defaultFieldValue !== null)
         appFieldValue.value.fieldValueId = defaultFieldValue.id;
     }
+    appFieldValue.value.setNumber = 1;
     // save default value to database
-    saveFieldValue();
-  }
-
-  if (props.fieldPageGroup.field.appFieldValues.length > 0) {
-    console.log("get prev appFieldValues");
-    let value = props.fieldPageGroup.field.appFieldValues.find(
-      (appFieldValue) => {
-        return appFieldValue.setNumber === props.setNumber;
-      }
-    );
-
-    if (value) appFieldValue.value = value;
+    await saveFieldValue();
   } else {
-    appFieldValue.value.setNumber = props.setNumber;
+    if (props.fieldPageGroup.field.appFieldValues.length > 0) {
+      let value = props.fieldPageGroup.field.appFieldValues.find(
+        (appFieldValue) => {
+          return appFieldValue.setNumber === props.setNumber;
+        }
+      );
+
+      if (value) appFieldValue.value = value;
+    } else {
+      appFieldValue.value.setNumber = props.setNumber;
+    }
   }
   if (type.value === "Dropdown" || type.value === "Radio") {
     fieldValues.value = props.fieldPageGroup.field.fieldValues;
@@ -203,15 +203,14 @@ const initializeAppFieldValue = () => {
   }
 };
 watch(
-  () => props.fieldPageGroup,
-  (first, second) => {
-    initializeAppFieldValue();
-  },
-  { deep: true }
+  () => props.setNumber,
+  async (first, second) => {
+    await initializeAppFieldValue();
+  }
 );
 
-onMounted(() => {
-  initializeAppFieldValue();
+onMounted(async () => {
+  await initializeAppFieldValue();
 });
 </script>
 

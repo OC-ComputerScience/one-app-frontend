@@ -8,20 +8,19 @@ const props = defineProps(["pageGroup", "applicationId"]);
 const emit = defineEmits(["revalidateApp"]);
 const pgComplete = ref([]);
 const numCol = ref("1");
+const pageGroup = ref(props.pageGroup);
 
 const canremoveGroups = computed(() => {
-  return props.pageGroup.numGroups > props.pageGroup.minSetCount;
+  return pageGroup.value.numGroups > pageGroup.value.minSetCount;
 });
 
 const findSetNumber = (index) => {
   try {
     let setNumber =
-      props.pageGroup.fieldPageGroups[0].field.appFieldValues[index].setNumber;
+      pageGroup.value.fieldPageGroups[0].field.appFieldValues[index].setNumber;
 
     return setNumber;
   } catch (error) {
-    console.log("error in findSetNumber");
-
     return 1;
   }
 
@@ -29,10 +28,10 @@ const findSetNumber = (index) => {
 };
 
 const revalidateGroup = (fieldPageGroupId, value, setNumber) => {
-  for (let i = 0; i < props.pageGroup.numGroups; i++) {
+  for (let i = 0; i < pageGroup.value.numGroups; i++) {
     pgComplete.value[i] = true;
 
-    props.pageGroup.fieldPageGroups.forEach((fpg) => {
+    pageGroup.value.fieldPageGroups.forEach((fpg) => {
       // if fieldPageGroupId not null, then we are updating the field value
       if (fieldPageGroupId != null) {
         fpg.field.appFieldValues.sort((a, b) => {
@@ -59,12 +58,12 @@ const revalidateGroup = (fieldPageGroupId, value, setNumber) => {
             fpg.field.appFieldValues[i].fieldValueName == null ||
             fpg.field.appFieldValues[i].fieldValueName == ""
           ) {
-            props.pageGroup.isComplete = false;
+            pageGroup.value.isComplete = false;
             fpg.isComplete = false;
             pgComplete.value[i] = false;
           }
         } else {
-          props.pageGroup.isComplete = false;
+          pageGroup.value.isComplete = false;
           fpg.isComplete = false;
           pgComplete.value[i] = false;
         }
@@ -75,14 +74,14 @@ const revalidateGroup = (fieldPageGroupId, value, setNumber) => {
 };
 
 const canAddGroups = computed(() => {
-  let isLessThanMax = props.pageGroup.numGroups < props.pageGroup.maxSetCount;
-  let isAtLeastMin = props.pageGroup.numGroups >= props.pageGroup.minSetCount;
+  let isLessThanMax = pageGroup.value.numGroups < pageGroup.value.maxSetCount;
+  let isAtLeastMin = pageGroup.value.numGroups >= pageGroup.value.minSetCount;
 
   return isLessThanMax && isAtLeastMin;
 });
 
 const addPageGroup = () => {
-  props.pageGroup.fieldPageGroups.forEach((fieldPageGroup) => {
+  pageGroup.value.fieldPageGroups.forEach((fieldPageGroup) => {
     let maxSet = 0;
     fieldPageGroup.field.appFieldValues.forEach((fieldValue) => {
       if (fieldValue.setNumber > maxSet) {
@@ -95,12 +94,12 @@ const addPageGroup = () => {
     });
   });
 
-  props.pageGroup.numGroups++;
+  pageGroup.value.numGroups++;
 };
 const removePageGroup = async (index) => {
   let setNumber = findSetNumber(index);
 
-  props.pageGroup.fieldPageGroups.forEach(async (fieldPageGroup) => {
+  pageGroup.value.fieldPageGroups.forEach(async (fieldPageGroup) => {
     fieldPageGroup.field.appFieldValues =
       fieldPageGroup.field.appFieldValues.filter(
         (fieldValue) => fieldValue.setNumber !== setNumber
@@ -111,14 +110,16 @@ const removePageGroup = async (index) => {
       props.applicationId,
       setNumber
     );
+    fieldPageGroup.field;
   });
 
-  props.pageGroup.numGroups--;
+  pageGroup.value.numGroups--;
 };
 
 watch(
   () => props.pageGroup,
   (first, second) => {
+    pageGroup.value = props.pageGroup;
     revalidateGroup(null, null, null);
   }
 );
@@ -135,7 +136,7 @@ onMounted(() => {
     class="mt-4"
   >
     <v-toolbar>
-      <v-toolbar-title> {{ pageGroup.title }} {{ index }} </v-toolbar-title>
+      <v-toolbar-title> {{ pageGroup.title }} </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn
         icon
