@@ -95,7 +95,6 @@ const signIn = async () => {
       store.commit("setLoginUser", loginUser);
       router.push({ name: "home" });
     } catch (err) {
-      console.error(err);
       errorMessage.value = err.response.data.message;
     }
   } else {
@@ -118,7 +117,6 @@ const signIn = async () => {
           router.push({ name: "home" });
         })
         .catch((error) => {
-          console.error(error);
           errorMessage.value = error.response.data.message;
         });
     } catch (err) {
