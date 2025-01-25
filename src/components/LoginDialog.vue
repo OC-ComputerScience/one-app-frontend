@@ -119,11 +119,10 @@ const signIn = async () => {
         })
         .catch((error) => {
           console.error(error);
-          errorMessage.value = err.response.data.message;
+          errorMessage.value = error.response.data.message;
         });
     } catch (err) {
-      errorMessage.value = err.response.data.message;
-      console.error(err);
+      errorMessage.value = err.response.message;
     }
   }
 };
