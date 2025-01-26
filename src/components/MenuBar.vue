@@ -45,9 +45,7 @@ onMounted(() => {
 
 function logout() {
   UserServices.logoutUser()
-    .then((data) => {
-      console.log(data);
-    })
+    .then((data) => {})
     .catch((error) => {
       console.log(error);
     });
