@@ -44,16 +44,29 @@ const rules = {
   general: [(v) => !!v || "This field is required"],
 };
 
-const changeFieldValue = (value) => {
-  appFieldValue.value.fieldValueId = value ? value.id : null;
-  appFieldValue.value.fieldValueName = value ? value.value : null;
-};
 const changeAutoListFieldValue = (value) => {
   if (value == null) {
     appFieldValue.value.fieldValueName = "";
     return;
   }
   appFieldValue.value.fieldValueName = value.value;
+
+  let field = fieldValues.value.find((fieldValue) => {
+    return fieldValue.value == appFieldValue.value.fieldValueName;
+  });
+
+  if (field) {
+    saveFieldValue();
+  }
+};
+
+const changeListField = async (value) => {
+  appFieldValue.value.fieldValueId = value ? value.id : null;
+  appFieldValue.value.fieldValueName = value ? value.value : null;
+  let field = fieldValues.value.find((fieldValue) => {
+    return fieldValue.id == appFieldValue.value.fieldValueId;
+  });
+  if (field) await saveFieldValue();
 };
 
 const saveFieldValue = async () => {
@@ -245,7 +258,7 @@ onMounted(async () => {
       variant="outlined"
       density="compact"
       return-object
-      @update:modelValue="changeFieldValue(selectedFieldValue)"
+      @update:modelValue="changeListField(selectedFieldValue)"
       v-on:blur="saveFieldValue()"
       :rules="required ? rules.general : []"
     ></v-select>
@@ -292,8 +305,7 @@ onMounted(async () => {
       :label="displayFieldlName"
       v-maska="'(###) ###-####'"
       :placeholder="props.fieldPageGroup.field.placeholderText"
-      :rules="[required]"
-      type="tel"
+      :rules="[required ? rules.general : []]"
       variant="outlined"
       density="compact"
       v-on:blur="saveFieldValue"
