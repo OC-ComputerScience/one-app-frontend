@@ -44,7 +44,8 @@ const forceUpdate = async () => {
   pageKey.value += 1;
   setNavButtons();
 };
-const revalidateApp = async () => {
+const revalidateApp = async (pageGroup, pageGroupIndex) => {
+  activePage.value.pageGroups[pageGroupIndex] = pageGroup;
   validatePages();
   setNavButtons();
 };
@@ -178,6 +179,8 @@ const retrievePages = async (setActive) => {
 };
 
 const validatePages = () => {
+  console.log("validating app");
+  console.log(pages.value);
   if (application.value == null) {
     return;
   }
@@ -189,7 +192,7 @@ const validatePages = () => {
       group.fieldPageGroups.forEach((fpg) => {
         fpg.isComplete = true;
         if (fpg.field.isRequired) {
-          if (fpg.field.appFieldValues.length == 0) {
+          if (fpg.field.appFieldValues.length < group.minSetCount) {
             application.value.isComplete = false;
             group.isComplete = false;
             fpg.isComplete = false;
@@ -205,6 +208,7 @@ const validatePages = () => {
       });
     });
   });
+  console.log(application.value.isComplete);
 };
 
 const submitDisabled = () => {

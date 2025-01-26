@@ -4,7 +4,7 @@ import AppFieldValueServices from "./../../services/AppFieldValueServices.js";
 
 import { computed, onMounted, onBeforeUpdate, ref, watch } from "vue";
 
-const props = defineProps(["pageGroup", "applicationId"]);
+const props = defineProps(["pageGroup", "pageGroupIndex", "applicationId"]);
 const emit = defineEmits(["revalidateApp"]);
 const pgComplete = ref([]);
 const numCol = ref("1");
@@ -44,7 +44,7 @@ const revalidateGroup = (fieldPageGroupId, value, setNumber) => {
         if (index === -1) {
           fpg.field.appFieldValues.push({
             setNumber: setNumber,
-            fieldValueName: null,
+            fieldValueName: value,
           });
           index = fpg.field.appFieldValues.length - 1;
         }
@@ -70,7 +70,8 @@ const revalidateGroup = (fieldPageGroupId, value, setNumber) => {
       }
     });
   }
-  emit("revalidateApp");
+
+  emit("revalidateApp", pageGroup.value, props.pageGroupIndex);
 };
 
 const canAddGroups = computed(() => {
