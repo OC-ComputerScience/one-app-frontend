@@ -220,6 +220,9 @@ const submitDisabled = () => {
 onMounted(async () => {
   user.value = store.getters.getUser;
   await retrieveApplications();
+  if (application.value.status == "submitted") {
+    router.push({ name: "studentHome" });
+  }
   await retrievePages(true);
   validatePages();
   setNavButtons();
