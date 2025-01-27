@@ -127,6 +127,7 @@ const createApplication = async () => {
     .then((response) => {
       application.value = response.data;
       application.value.isComplete = false;
+      application.value.status = "pending";
       appId.value = application.value.id;
     })
     .catch((err) => {

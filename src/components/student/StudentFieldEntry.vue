@@ -36,12 +36,14 @@ const rules = {
     (v) => !!v || "Email is required",
     (v) => /.+@.+\..+/.test(v) || "Email must be valid",
   ],
-
+  date: (v) =>
+    /^((0[1-9]|1[012])[/](0[1-9]|[12][0-9]|3[01])[/](19|20)\d\d)|^$/.test(v) ||
+    "Date must be valid",
   text: [
     (v) => !!v || "This field is required",
     (v) => (v && v.length <= 100) || "Text must be less than 100 characters",
   ],
-  general: [(v) => !!v || "This field is required"],
+  general: (v) => !!v || "This field is required",
 };
 
 const changeAutoListFieldValue = (value) => {
@@ -244,7 +246,7 @@ onMounted(async () => {
       :label="displayFieldlName"
       :placeholder="props.fieldPageGroup.field.placeholderText"
       v-on:blur="saveFieldValue"
-      :rules="required ? rules.general : []"
+      :rules="required ? [rules.date, rules.general] : rules.date"
     ></v-date-input>
   </div>
   <div v-else-if="type === 'Dropdown'">
