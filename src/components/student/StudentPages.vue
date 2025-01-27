@@ -4,10 +4,10 @@ import { ref, onMounted, onUpdated } from "vue";
 const props = defineProps(["pages", "activePage", "application"]);
 const emit = defineEmits(["changeActivePage", "displaySubDiaglog"]);
 
-const activePage = ref({});
+const currentActivePage = ref({});
 
 const changeActivePage = () => {
-  emit("changeActivePage", activePage.value);
+  emit("changeActivePage", currentActivePage.value);
 };
 const displaySubDiaglog = () => {
   emit("displaySubDiaglog");
@@ -20,11 +20,11 @@ const isDisabled = () => {
 };
 
 onMounted(() => {
-  activePage.value = props.activePage;
+  currentActivePage.value = props.activePage;
 });
 
 onUpdated(() => {
-  activePage.value = props.activePage;
+  currentActivePage.value = props.activePage;
 });
 </script>
 
@@ -36,7 +36,7 @@ onUpdated(() => {
       </div>
       <div align="center" class="text-subtitle-2 ml-4">then click submit</div>
       <v-tabs
-        v-model="activePage"
+        v-model="currentActivePage"
         color="primary"
         direction="vertical"
         @update:modelValue="changeActivePage"
