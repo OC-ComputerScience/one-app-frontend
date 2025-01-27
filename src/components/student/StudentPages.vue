@@ -20,10 +20,12 @@ const isDisabled = () => {
 };
 
 onMounted(() => {
+  window.scrollTo(0, 0);
   currentActivePage.value = props.activePage;
 });
 
 onUpdated(() => {
+  window.scrollTo(0, 0);
   currentActivePage.value = props.activePage;
 });
 </script>
