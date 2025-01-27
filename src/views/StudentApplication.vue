@@ -93,20 +93,20 @@ const prevPage = () => {
 
 const retrieveApplications = async () => {
   await ApplicationServices.getApplicationsByUserId(user.value.id)
-    .then((response) => {
+    .then(async (response) => {
       if (response.data.length > 0) {
         application.value = response.data[0];
         application.value.isComplete = false;
         appId.value = application.value.id;
         formId.value = application.value.formId;
       }
+      if (application.value == null) {
+        await createApplication();
+      }
     })
     .catch((err) => {
       console.error(err);
     });
-  if (application.value == null) {
-    await createApplication();
-  }
 };
 
 const createApplication = async () => {
@@ -118,16 +118,16 @@ const createApplication = async () => {
       console.error(err);
     });
 
-  const application = {
+  const newApplication = {
     status: "pending",
     userId: user.value.id,
     formId: formId.value,
   };
-  await ApplicationServices.addApplications(application)
+  await ApplicationServices.addApplications(newApplication)
     .then((response) => {
+      console.log(response.data);
       application.value = response.data;
       application.value.isComplete = false;
-      application.value.status = "pending";
       appId.value = application.value.id;
     })
     .catch((err) => {
@@ -209,7 +209,6 @@ const validatePages = () => {
       });
     });
   });
-  console.log(application.value.isComplete);
 };
 
 const submitDisabled = () => {
@@ -220,13 +219,16 @@ const submitDisabled = () => {
 };
 onMounted(async () => {
   user.value = store.getters.getUser;
-  await retrieveApplications();
-  if (application.value.status == "submitted") {
-    router.push({ name: "studentHome" });
-  }
-  await retrievePages(true);
-  validatePages();
-  setNavButtons();
+  await retrieveApplications().then(async () => {
+    console.log("app status: ");
+    console.log(application.value);
+    if (application.value.status == "submitted") {
+      router.push({ name: "studentHome" });
+    }
+    await retrievePages(true);
+    validatePages();
+    setNavButtons();
+  });
 });
 </script>
 
