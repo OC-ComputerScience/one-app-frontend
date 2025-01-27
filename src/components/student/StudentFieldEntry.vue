@@ -32,18 +32,14 @@ const user = ref(null);
 user.value = store.getters.getUser;
 
 const rules = {
-  email: [
-    (v) => !!v || "Email is required",
-    (v) => /.+@.+\..+/.test(v) || "Email must be valid",
-  ],
+  email: (v) => /^(.+@.+\..+)|^$/.test(v) || "Email must be valid",
   date: (v) =>
     /^((0[1-9]|1[012])[/](0[1-9]|[12][0-9]|3[01])[/](19|20)\d\d)|^$/.test(v) ||
     "Date must be valid",
-  text: [
-    (v) => !!v || "This field is required",
-    (v) => (v && v.length <= 100) || "Text must be less than 100 characters",
-  ],
-  general: (v) => !!v || "This field is required",
+  text: (v) =>
+    (v && v.length <= 100) || "Text must be less than 100 characters",
+  phone: (v) => (v && v.length == 14) || "Phone must (###) ###-####",
+  required: (v) => !!v || "This field is required",
 };
 
 const changeAutoListFieldValue = (value) => {
@@ -235,7 +231,7 @@ onMounted(async () => {
       v-model="appFieldValue.fieldValueName"
       :label="displayFieldlName"
       @update:modelValue="saveFieldValue"
-      :rules="required ? rules.general : []"
+      :rules="required ? [rules.required] : []"
     ></v-checkbox>
   </div>
   <div v-else-if="type === 'Date'">
@@ -246,7 +242,7 @@ onMounted(async () => {
       :label="displayFieldlName"
       :placeholder="props.fieldPageGroup.field.placeholderText"
       v-on:blur="saveFieldValue"
-      :rules="required ? [rules.date, rules.general] : rules.date"
+      :rules="required ? [rules.date, rules.required] : [rules.date]"
     ></v-date-input>
   </div>
   <div v-else-if="type === 'Dropdown'">
@@ -262,7 +258,7 @@ onMounted(async () => {
       return-object
       @update:modelValue="changeListField(selectedFieldValue)"
       v-on:blur="saveFieldValue()"
-      :rules="required ? rules.general : []"
+      :rules="required ? [rules.required] : []"
     ></v-select>
   </div>
   <div v-else-if="type === 'State' || type === 'Country' || type === 'Major'">
@@ -278,7 +274,7 @@ onMounted(async () => {
       return-object
       @update:modelValue="changeAutoListFieldValue(selectedFieldValue)"
       v-on:blur="saveFieldValue()"
-      :rules="required ? rules.general : []"
+      :rules="required ? [rules.required] : []"
     ></v-select>
   </div>
   <div v-else-if="type === 'Email' || type === 'Text'">
@@ -288,12 +284,12 @@ onMounted(async () => {
       :placeholder="props.fieldPageGroup.field.placeholderText"
       :rules="
         type === 'Email' && required
-          ? rules.email
-          : type === 'Phone Number' && required
-          ? rules.phone
-          : required
-          ? rules.text
-          : []
+          ? [rules.email, rules.required]
+          : type === 'Email'
+          ? [rules.email]
+          : type === 'Text' && required
+          ? [rules.text, rules.required]
+          : (type = 'Text' ? [rules.text] : [])
       "
       :type="type === 'Email' ? 'email' : 'text'"
       variant="outlined"
@@ -307,7 +303,7 @@ onMounted(async () => {
       :label="displayFieldlName"
       v-maska="'(###) ###-####'"
       :placeholder="props.fieldPageGroup.field.placeholderText"
-      :rules="[required ? rules.general : []]"
+      :rules="required ? [rules.required, rules.phone] : [rules.phone]"
       variant="outlined"
       density="compact"
       v-on:blur="saveFieldValue"
@@ -322,7 +318,7 @@ onMounted(async () => {
       variant="outlined"
       density="compact"
       v-on:blur="saveFieldValue"
-      :rules="required ? rules.general : []"
+      :rules="required ? [rules.required] : []"
     ></v-text-field>
   </div>
   <div v-else-if="type === 'Paragraph'">
@@ -333,14 +329,14 @@ onMounted(async () => {
       variant="outlined"
       density="compact"
       v-on:blur="saveFieldValue"
-      :rules="required ? rules.general : []"
+      :rules="required ? [rules.required] : []"
     ></v-textarea>
   </div>
   <div v-else-if="type === 'Radio'">
     <v-radio-group
       v-model="appFieldValue.fieldValueName"
       :label="displayFieldlName"
-      :rules="required ? rules.general : []"
+      :rules="required ? [rules.required, rules.phone] : [rules.phone]"
       @update:modelValue="saveFieldValue"
     >
       <v-radio
