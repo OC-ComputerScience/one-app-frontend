@@ -148,6 +148,7 @@ const getFieldDefaultValue = () => {
 };
 
 const initializeAppFieldValue = async () => {
+  console.log(props.fieldPageGroup.field);
   type.value = props.fieldPageGroup.field.type;
   required.value = props.fieldPageGroup.field.isRequired;
   appFieldValue.value.fieldId = props.fieldPageGroup.fieldId;
@@ -170,8 +171,11 @@ const initializeAppFieldValue = async () => {
           return fieldValue.value === appFieldValue.value.fieldValueName;
         }
       );
-      if (defaultFieldValue !== null)
+
+      if (defaultFieldValue !== undefined && defaultFieldValue !== null) {
+        console.log(defaultFieldValue);
         appFieldValue.value.fieldValueId = defaultFieldValue.id;
+      }
     }
     appFieldValue.value.setNumber = 1;
     // save default value to database
@@ -289,7 +293,7 @@ onMounted(async () => {
           ? [rules.email]
           : type === 'Text' && required
           ? [rules.text, rules.required]
-          : (type = 'Text' ? [rules.text] : [])
+          : [rules.text]
       "
       :type="type === 'Email' ? 'email' : 'text'"
       variant="outlined"

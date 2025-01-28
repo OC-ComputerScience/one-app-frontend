@@ -180,8 +180,6 @@ const retrievePages = async (setActive) => {
 };
 
 const validatePages = () => {
-  console.log("validating app");
-  console.log(pages.value);
   if (application.value == null) {
     return;
   }

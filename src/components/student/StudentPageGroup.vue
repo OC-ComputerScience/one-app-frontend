@@ -137,7 +137,7 @@ onMounted(() => {
     class="mt-4"
   >
     <v-toolbar>
-      <v-toolbar-title> {{ pageGroup.title }} </v-toolbar-title>
+      <v-toolbar-title> {{ pageGroup.title }}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn
         icon
