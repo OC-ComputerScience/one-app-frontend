@@ -118,16 +118,15 @@ const createApplication = async () => {
       console.error(err);
     });
 
-  const application = {
+  const newApplication = {
     status: "pending",
     userId: user.value.id,
     formId: formId.value,
   };
-  await ApplicationServices.addApplications(application)
+  await ApplicationServices.addApplications(newApplication)
     .then((response) => {
       application.value = response.data;
       application.value.isComplete = false;
-      application.value.status = "pending";
       appId.value = application.value.id;
     })
     .catch((err) => {
