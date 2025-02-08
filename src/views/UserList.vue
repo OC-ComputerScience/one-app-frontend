@@ -30,6 +30,7 @@ const json_fields = [
   "lastName",
   "email",
   "phone",
+  "streetAddress",
   "city",
   "state",
   "zip",
