@@ -144,240 +144,236 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
-    <v-container>
-      <v-card>
-        <v-card-title>{{ cardTitle }}</v-card-title>
-        <v-divider class="mt-3"></v-divider>
-        <v-card-text>
-          <v-form ref="loginForm" v-model="validForm">
-            <v-autocomplete
+  <v-card>
+    <v-card-title>{{ cardTitle }}</v-card-title>
+    <v-divider class="mt-3"></v-divider>
+    <v-card-text scrollable>
+      <v-form ref="loginForm" v-model="validForm">
+        <v-autocomplete
+          v-if="!login"
+          v-model="user.roleId"
+          :items="roles"
+          item-title="type"
+          item-value="id"
+          label="Type of User"
+          variant="outlined"
+          density="compact"
+          :rules="[rules.required]"
+          @update:modelValue="changeRole"
+        ></v-autocomplete>
+        <v-autocomplete
+          v-if="!login && user.roleId == 3"
+          v-model="user.universityId"
+          :items="universities"
+          item-title="name"
+          item-value="id"
+          label="University Name"
+          variant="outlined"
+          density="compact"
+          :rules="[rules.required]"
+        ></v-autocomplete>
+        <v-row dense v-if="!login">
+          <v-col cols="6">
+            <v-text-field
+              v-model="user.firstName"
+              label="First Name"
+              variant="outlined"
+              density="compact"
+              :rules="[rules.required]"
+            />
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              v-model="user.lastName"
+              label="Last Name"
+              variant="outlined"
+              density="compact"
+              :rules="[rules.required]"
+            />
+          </v-col>
+        </v-row>
+
+        <v-text-field
+          v-if="!login && user.roleId == 2"
+          v-model="user.streetAddress"
+          label="Street Address"
+          variant="outlined"
+          density="compact"
+          :rules="[rules.required]"
+        />
+
+        <v-row dense v-if="!login && user.roleId == 2">
+          <v-col cols="6">
+            <v-text-field
+              class="md-4"
+              v-model="user.city"
+              label="City"
+              variant="outlined"
+              density="compact"
+              :rules="[rules.required]"
+            />
+          </v-col>
+          <v-col cols="3">
+            <v-select
+              v-model="user.state"
+              :items="states.states"
+              label="State"
+              placeholder="State"
+              item-title="value"
+              item-value="value"
+              variant="outlined"
+              density="compact"
+              :rules="[rules.required]"
+            ></v-select>
+          </v-col>
+          <v-col cols="3">
+            <v-text-field
+              class="md-4"
+              v-model="user.zip"
+              label="Zip Code"
+              variant="outlined"
+              density="compact"
+              :rules="[rules.required]"
+            />
+          </v-col>
+        </v-row>
+        <v-row dense>
+          <v-col v-if="login" cols="12">
+            <v-text-field
+              class=""
+              v-model="user.email"
+              label="Email"
+              variant="outlined"
+              density="compact"
+              :rules="[rules.required, rules.email]"
+            />
+          </v-col>
+          <v-col v-if="!login" cols="6">
+            <v-text-field
+              class=""
+              v-model="user.email"
+              label="Email"
+              variant="outlined"
+              density="compact"
+              :rules="[rules.required, rules.email]"
+            />
+          </v-col>
+          <v-col v-if="!login" cols="6">
+            <v-text-field
+              class="ma-0 pa-0"
               v-if="!login"
-              v-model="user.roleId"
-              :items="roles"
-              item-title="type"
-              item-value="id"
-              label="Type of User"
+              v-maska="'(###) ###-####'"
+              v-model="user.phone"
+              label="Phone"
               variant="outlined"
               density="compact"
-              :rules="[rules.required]"
-              @update:modelValue="changeRole"
-            ></v-autocomplete>
+              :rules="[rules.required, rules.phone]"
+            />
+          </v-col>
+        </v-row>
+        <v-text-field
+          v-if="!login && user.roleId == 2"
+          v-model="user.congregation"
+          label="Church congregation you attend"
+          variant="outlined"
+          density="compact"
+          :rules="[rules.required]"
+        />
+
+        <v-row dense>
+          <v-col cols="6">
             <v-autocomplete
-              v-if="!login && user.roleId == 3"
-              v-model="user.universityId"
-              :items="universities"
-              item-title="name"
-              item-value="id"
-              label="University Name"
+              v-if="!login && user.roleId == 2"
+              v-model="user.hsgradyear"
+              :items="hsgradyear"
+              label="HS Grad Year"
               variant="outlined"
               density="compact"
               :rules="[rules.required]"
             ></v-autocomplete>
-            <v-row dense v-if="!login">
-              <v-col cols="6">
-                <v-text-field
-                  v-model="user.firstName"
-                  label="First Name"
-                  variant="outlined"
-                  density="compact"
-                  :rules="[rules.required]"
-                />
-              </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  v-model="user.lastName"
-                  label="Last Name"
-                  variant="outlined"
-                  density="compact"
-                  :rules="[rules.required]"
-                />
-              </v-col>
-            </v-row>
-
-            <v-text-field
+          </v-col>
+          <v-col cols="6">
+            <v-autocomplete
               v-if="!login && user.roleId == 2"
-              v-model="user.streetAddress"
-              label="Street Address"
+              v-model="user.howHeard"
+              :items="howHeard"
+              label="How did you hear about OneApp"
               variant="outlined"
               density="compact"
               :rules="[rules.required]"
-            />
-
-            <v-row dense v-if="!login && user.roleId == 2">
-              <v-col cols="6">
-                <v-text-field
-                  class="md-4"
-                  v-model="user.city"
-                  label="City"
-                  variant="outlined"
-                  density="compact"
-                  :rules="[rules.required]"
-                />
-              </v-col>
-              <v-col cols="3">
-                <v-select
-                  v-model="user.state"
-                  :items="states.states"
-                  label="State"
-                  placeholder="State"
-                  item-title="value"
-                  item-value="value"
-                  variant="outlined"
-                  density="compact"
-                  :rules="[rules.required]"
-                ></v-select>
-              </v-col>
-              <v-col cols="3">
-                <v-text-field
-                  class="md-4"
-                  v-model="user.zip"
-                  label="Zip Code"
-                  variant="outlined"
-                  density="compact"
-                  :rules="[rules.required]"
-                />
-              </v-col>
-            </v-row>
-            <v-row dense>
-              <v-col v-if="login" cols="12">
-                <v-text-field
-                  class=""
-                  v-model="user.email"
-                  label="Email"
-                  variant="outlined"
-                  density="compact"
-                  :rules="[rules.required, rules.email]"
-                />
-              </v-col>
-              <v-col v-if="!login" cols="6">
-                <v-text-field
-                  class=""
-                  v-model="user.email"
-                  label="Email"
-                  variant="outlined"
-                  density="compact"
-                  :rules="[rules.required, rules.email]"
-                />
-              </v-col>
-              <v-col v-if="!login" cols="6">
-                <v-text-field
-                  class="ma-0 pa-0"
-                  v-if="!login"
-                  v-maska="'(###) ###-####'"
-                  v-model="user.phone"
-                  label="Phone"
-                  variant="outlined"
-                  density="compact"
-                  :rules="[rules.required, rules.phone]"
-                />
-              </v-col>
-            </v-row>
+            ></v-autocomplete>
+          </v-col>
+        </v-row>
+        <v-row dense>
+          <v-col cols="12">
             <v-text-field
-              v-if="!login && user.roleId == 2"
-              v-model="user.congregation"
-              label="Church congregation you attend"
+              v-if="login"
+              v-model="user.password"
+              label="Password"
               variant="outlined"
               density="compact"
+              type="password"
               :rules="[rules.required]"
             />
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              v-if="!login"
+              v-model="user.password"
+              label="Password"
+              variant="outlined"
+              density="compact"
+              type="password"
+              :rules="[rules.required, rules.passwordLength]"
+            />
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              v-if="!login"
+              v-model="confirmPassword"
+              label="Confirm Password"
+              variant="outlined"
+              density="compact"
+              type="password"
+              :rules="[rules.required, rules.passwordCheck]"
+            />
+          </v-col>
+        </v-row>
+        <v-checkbox
+          v-if="!login && user.roleId == 2"
+          v-model="agree"
+          label="I agree for CHEF to share my data with partner universities."
+          :rules="[rules.required]"
+        >
+        </v-checkbox>
+      </v-form>
+    </v-card-text>
+    <v-card-text align="center" class="text-red">{{
+      errorMessage
+    }}</v-card-text>
+    <v-divider class="mt-3"></v-divider>
+    <v-card-actions align="right">
+      <v-btn
+        variant="plain"
+        elevation="0"
+        density="comfortable"
+        @click="closeDialog"
+        color="accent"
+      >
+        Cancel
+      </v-btn>
+      <v-spacer></v-spacer>
 
-            <v-row dense>
-              <v-col cols="6">
-                <v-autocomplete
-                  v-if="!login && user.roleId == 2"
-                  v-model="user.hsgradyear"
-                  :items="hsgradyear"
-                  label="HS Grad Year"
-                  variant="outlined"
-                  density="compact"
-                  :rules="[rules.required]"
-                ></v-autocomplete>
-              </v-col>
-              <v-col cols="6">
-                <v-autocomplete
-                  v-if="!login && user.roleId == 2"
-                  v-model="user.howHeard"
-                  :items="howHeard"
-                  label="How did you hear about OneApp"
-                  variant="outlined"
-                  density="compact"
-                  :rules="[rules.required]"
-                ></v-autocomplete>
-              </v-col>
-            </v-row>
-            <v-row dense>
-              <v-col cols="12">
-                <v-text-field
-                  v-if="login"
-                  v-model="user.password"
-                  label="Password"
-                  variant="outlined"
-                  density="compact"
-                  type="password"
-                  :rules="[rules.required]"
-                />
-              </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  v-if="!login"
-                  v-model="user.password"
-                  label="Password"
-                  variant="outlined"
-                  density="compact"
-                  type="password"
-                  :rules="[rules.required, rules.passwordLength]"
-                />
-              </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  v-if="!login"
-                  v-model="confirmPassword"
-                  label="Confirm Password"
-                  variant="outlined"
-                  density="compact"
-                  type="password"
-                  :rules="[rules.required, rules.passwordCheck]"
-                />
-              </v-col>
-            </v-row>
-            <v-checkbox
-              v-if="!login && user.roleId == 2"
-              v-model="agree"
-              label="I agree for CHEF to share my data with partner universities."
-              :rules="[rules.required]"
-            >
-            </v-checkbox>
-          </v-form>
-        </v-card-text>
-        <v-card-text align="center" class="text-red">{{
-          errorMessage
-        }}</v-card-text>
-        <v-divider class="mt-3"></v-divider>
-        <v-card-actions align="right">
-          <v-btn
-            variant="plain"
-            elevation="0"
-            density="comfortable"
-            @click="closeDialog"
-            color="accent"
-          >
-            Cancel
-          </v-btn>
-          <v-spacer></v-spacer>
-
-          <v-btn
-            variant="outlined"
-            elevation="0"
-            density="comfortable"
-            @click="signIn"
-            color="primary"
-            :disabled="!validForm"
-          >
-            {{ loginBtnTitle }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-container>
-  </div>
+      <v-btn
+        variant="outlined"
+        elevation="0"
+        density="comfortable"
+        @click="signIn"
+        color="primary"
+        :disabled="!validForm"
+      >
+        {{ loginBtnTitle }}
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
