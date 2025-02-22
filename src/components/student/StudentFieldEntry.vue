@@ -148,7 +148,6 @@ const getFieldDefaultValue = () => {
 };
 
 const initializeAppFieldValue = async () => {
-  console.log(props.fieldPageGroup.field);
   type.value = props.fieldPageGroup.field.type;
   required.value = props.fieldPageGroup.field.isRequired;
   appFieldValue.value.fieldId = props.fieldPageGroup.fieldId;
@@ -164,6 +163,7 @@ const initializeAppFieldValue = async () => {
       appFieldValue.value.fieldValueName === null)
   ) {
     appFieldValue.value.fieldValueName = getFieldDefaultValue();
+
     let defaultFieldValue = null;
     if (type.value === "Dropdown" || type.value === "Radio") {
       defaultFieldValue = props.fieldPageGroup.field.fieldValues.find(
@@ -173,7 +173,6 @@ const initializeAppFieldValue = async () => {
       );
 
       if (defaultFieldValue !== undefined && defaultFieldValue !== null) {
-        console.log(defaultFieldValue);
         appFieldValue.value.fieldValueId = defaultFieldValue.id;
       }
     }
@@ -193,6 +192,13 @@ const initializeAppFieldValue = async () => {
       appFieldValue.value.setNumber = props.setNumber;
     }
   }
+  if (
+    (appFieldValue.value.fieldValueName == null ||
+      appFieldValue.value.fieldValueName == "") &&
+    type.value === "Country"
+  )
+    appFieldValue.value.fieldValueName = "United States";
+
   if (type.value === "Dropdown" || type.value === "Radio") {
     fieldValues.value = props.fieldPageGroup.field.fieldValues;
     if (appFieldValue.value.fieldValueId !== null) {

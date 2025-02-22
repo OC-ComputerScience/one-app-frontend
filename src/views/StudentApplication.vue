@@ -218,8 +218,6 @@ const submitDisabled = () => {
 onMounted(async () => {
   user.value = store.getters.getUser;
   await retrieveApplications().then(async () => {
-    console.log("app status: ");
-    console.log(application.value);
     if (application.value.status == "submitted") {
       router.push({ name: "studentHome" });
     }

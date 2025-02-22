@@ -74,6 +74,7 @@ onMounted(() => {
     </v-container>
 
     <v-dialog
+      scrollable
       v-model="showSignup"
       max-width="600px"
       content-class="my-custom-dialog"
