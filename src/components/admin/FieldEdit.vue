@@ -66,7 +66,7 @@ const saveField = async () => {
     } else {
       response = await FieldServices.addFields(props.field);
     }
-    if (fieldValues.value.length > 0) {
+    if (originalFieldValues.value.length > 0 || fieldValues.value.length > 0) {
       await saveFieldValues(response.data.id);
     }
   } catch (err) {
@@ -89,16 +89,16 @@ const saveFieldValues = async (fieldId) => {
       )
     );
 
-    await Promise.all(
-      fieldValues.value.map((fieldValue) => {
-        if (fieldValue.id) {
-          return FieldValueServices.updateFieldValues(fieldValue);
+    if (fieldValues.value.length > 0) {
+      for (let i = 0; i < fieldValues.value.length; i++) {
+        if (fieldValues.value[i].id) {
+          await FieldValueServices.updateFieldValues(fieldValues.value[i]);
         } else {
-          fieldValue.fieldId = fieldId;
-          return FieldValueServices.addFieldValues(fieldValue);
+          fieldValues.value[i].fieldId = fieldId;
+          await FieldValueServices.addFieldValues(fieldValues.value[i]);
         }
-      })
-    );
+      }
+    }
   } catch (err) {
     console.error(err);
   }
@@ -126,11 +126,11 @@ onMounted(async () => {
   }
 });
 </script>
-
 <template>
-  <div>
-    <v-card>
-      <v-card-title> {{ dialogTitle }} </v-card-title>
+  <v-card>
+    <v-card-title> {{ dialogTitle }} </v-card-title>
+    <v-divider></v-divider>
+    <v-card-text>
       <v-form v-model="form" class="ml-4 mr-4">
         <v-text-field
           v-model="props.field.name"
@@ -158,6 +158,7 @@ onMounted(async () => {
           label="Required"
           v-model="props.field.isRequired"
         ></v-checkbox>
+
         <v-checkbox
           color="primary"
           class="mt-n4"
@@ -175,6 +176,20 @@ onMounted(async () => {
           required
           @update:modelValue="checkFieldType"
         ></v-autocomplete>
+        <v-checkbox
+          v-if="props.field.type === 'Dropdown' || props.field.type === 'Radio'"
+          color="primary"
+          class="mt-n4"
+          label="Sorted"
+          v-model="props.field.sorted"
+        ></v-checkbox>
+        <v-text-field
+          v-if="props.field.type === 'Text'"
+          v-model="props.field.mask"
+          label="Field Mask"
+          variant="outlined"
+          density="compact"
+        ></v-text-field>
         <v-autocomplete
           class="mt-n4 mb-2"
           label="Default Field"
@@ -217,29 +232,28 @@ onMounted(async () => {
           ></v-btn>
         </div>
       </v-form>
-
-      <v-card-actions align="right" class="mr-2 mb-2">
-        <v-btn
-          variant="plain"
-          elevation="0"
-          density="comfortable"
-          @click="closeDialog"
-          color="accent"
-        >
-          Cancel
-        </v-btn>
-        <v-spacer></v-spacer>
-        <v-btn
-          :disabled="!form"
-          variant="outlined"
-          elevation="0"
-          density="comfortable"
-          @click="saveField"
-          color="primary"
-        >
-          Save
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </div>
+    </v-card-text>
+    <v-card-actions align="right" class="mr-2 mb-2">
+      <v-btn
+        variant="plain"
+        elevation="0"
+        density="comfortable"
+        @click="closeDialog"
+        color="accent"
+      >
+        Cancel
+      </v-btn>
+      <v-spacer></v-spacer>
+      <v-btn
+        :disabled="!form"
+        variant="outlined"
+        elevation="0"
+        density="comfortable"
+        @click="saveField"
+        color="primary"
+      >
+        Save
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>

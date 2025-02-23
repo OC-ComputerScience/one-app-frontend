@@ -25,6 +25,8 @@ const activeField = ref({
   isRequired: false,
   isEncrypted: false,
   defaultValue: "",
+  sorted: false,
+  mask: "",
 });
 
 const groupSequences = computed(() => {
@@ -156,6 +158,8 @@ const closeFieldDialog = () => {
     isRequired: false,
     isEncrypted: false,
     defaultValue: "",
+    sorted: false,
+    mask: "",
   };
   newFieldDialog.value = false;
 };
@@ -291,7 +295,7 @@ onUpdated(() => {
     </v-card>
   </div>
 
-  <v-dialog v-model="newFieldDialog" width="500">
+  <v-dialog scrollable v-model="newFieldDialog" width="500">
     <FieldEdit
       :field="activeField"
       @save-field="saveNewField"

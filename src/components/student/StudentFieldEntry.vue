@@ -200,7 +200,14 @@ const initializeAppFieldValue = async () => {
     appFieldValue.value.fieldValueName = "United States";
 
   if (type.value === "Dropdown" || type.value === "Radio") {
-    fieldValues.value = props.fieldPageGroup.field.fieldValues;
+    if (props.fieldPageGroup.field.sorted) {
+      fieldValues.value = props.fieldPageGroup.field.fieldValues.sort((a, b) =>
+        a.value.localeCompare(b.value)
+      );
+    } else {
+      fieldValues.value = props.fieldPageGroup.field.fieldValues;
+    }
+
     if (appFieldValue.value.fieldValueId !== null) {
       selectedFieldValue.value = fieldValues.value.find((fieldValue) => {
         return fieldValue.id === appFieldValue.value.fieldValueId;
@@ -291,6 +298,7 @@ onMounted(async () => {
     <v-text-field
       v-model="appFieldValue.fieldValueName"
       :label="displayFieldlName"
+      v-maska="props.fieldPageGroup.field.mask"
       :placeholder="props.fieldPageGroup.field.placeholderText"
       :rules="
         type === 'Email' && required
