@@ -176,6 +176,7 @@ const initializeAppFieldValue = async () => {
         appFieldValue.value.fieldValueId = defaultFieldValue.id;
       }
     }
+
     appFieldValue.value.setNumber = 1;
     // save default value to database
     await saveFieldValue();
@@ -192,6 +193,18 @@ const initializeAppFieldValue = async () => {
       appFieldValue.value.setNumber = props.setNumber;
     }
   }
+  console.log(type.value + "=" + appFieldValue.value.fieldValueName);
+  if (
+    type.value == "Checkbox" &&
+    (appFieldValue.value.fieldValueName == null ||
+      appFieldValue.value.fieldValueName == "")
+  ) {
+    appFieldValue.value.fieldValueName = false;
+    appFieldValue.value.setNumber = 1;
+    // save default value to database
+    await saveFieldValue();
+  }
+
   if (
     (appFieldValue.value.fieldValueName == null ||
       appFieldValue.value.fieldValueName == "") &&
@@ -201,8 +214,8 @@ const initializeAppFieldValue = async () => {
 
   if (type.value === "Dropdown" || type.value === "Radio") {
     if (props.fieldPageGroup.field.sorted) {
-      fieldValues.value = props.fieldPageGroup.field.fieldValues.sort((a, b) =>
-        a.value.localeCompare(b.value)
+      fieldValues.value = props.fieldPageGroup.field.fieldValues.sort(
+        (a, b) => a.value.localeCompare(b.value) == ""
       );
     } else {
       fieldValues.value = props.fieldPageGroup.field.fieldValues;

@@ -91,8 +91,11 @@ const generateDownload = async () => {
           pageGroup.fieldPageGroups.forEach((fpg) => {
             fpg.field.appFieldValues.sort((a, b) => a.setNumber - b.setNumber);
             let propValue = "";
-            if (i <= fpg.field.appFieldValues.length - 1)
+            if (i <= fpg.field.appFieldValues.length - 1) {
               propValue = fpg.field.appFieldValues[i].fieldValueName;
+              if (fpg.field.type == "Checkbox")
+                propValue = propValue === "1" ? "Y" : "N";
+            }
 
             let propName = "data" + dataIndex;
             data[propName] = propValue;
