@@ -19,6 +19,10 @@ const roles = ref([]);
 const universities = ref([]);
 const login = ref(props.displayLoginFirst);
 const validForm = ref(false);
+const showForgotPassword = ref(false);
+const resetEmail = ref("");
+const resetEmailSent = ref(false);
+const resetError = ref("");
 
 const validate = () => {
   loginForm.value.validate().then((valid) => {
@@ -141,6 +145,23 @@ onMounted(async () => {
     console.error(err);
   }
 });
+
+const requestPasswordReset = async () => {
+  resetError.value = "";
+  if (!emailRegex.test(resetEmail.value)) {
+    resetError.value = "Please enter a valid email address";
+    return;
+  }
+
+  try {
+    await UserServices.requestPasswordReset(resetEmail.value);
+    resetEmailSent.value = true;
+  } catch (err) {
+    resetError.value =
+      err.response?.data?.message ||
+      "Failed to send reset email. Please try again.";
+  }
+};
 </script>
 
 <template>
@@ -248,6 +269,24 @@ onMounted(async () => {
               :rules="[rules.required, rules.email]"
             />
           </v-col>
+          <v-col v-if="login" cols="12">
+            <v-text-field
+              v-model="user.password"
+              label="Password"
+              variant="outlined"
+              density="compact"
+              type="password"
+              :rules="[rules.required]"
+            />
+            <v-btn
+              variant="text"
+              color="primary"
+              class="text-decoration-none px-0 mt-2"
+              @click="showForgotPassword = true"
+            >
+              Forgot Password?
+            </v-btn>
+          </v-col>
           <v-col v-if="!login" cols="6">
             <v-text-field
               class=""
@@ -307,17 +346,6 @@ onMounted(async () => {
         <v-row dense>
           <v-col cols="12">
             <v-text-field
-              v-if="login"
-              v-model="user.password"
-              label="Password"
-              variant="outlined"
-              density="compact"
-              type="password"
-              :rules="[rules.required]"
-            />
-          </v-col>
-          <v-col cols="6">
-            <v-text-field
               v-if="!login"
               v-model="user.password"
               label="Password"
@@ -375,5 +403,57 @@ onMounted(async () => {
         {{ loginBtnTitle }}
       </v-btn>
     </v-card-actions>
+
+    <v-dialog v-model="showForgotPassword" max-width="500px">
+      <v-card>
+        <v-card-title class="text-h5">
+          Reset Password
+          <v-spacer></v-spacer>
+          <v-btn icon @click="showForgotPassword = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text class="pa-4">
+          <div v-if="!resetEmailSent">
+            <p>
+              Enter your email address and we'll send you instructions to reset
+              your password.
+            </p>
+            <v-text-field
+              v-model="resetEmail"
+              label="Email"
+              variant="outlined"
+              density="compact"
+              :rules="[rules.required, rules.email]"
+              :error-messages="resetError"
+              class="mt-4"
+            />
+          </div>
+          <div v-else>
+            <p class="text-success">
+              Password reset instructions have been sent to your email address.
+            </p>
+            <p class="mt-2">
+              Please check your inbox and follow the instructions to reset your
+              password.
+            </p>
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            v-if="!resetEmailSent"
+            color="primary"
+            @click="requestPasswordReset"
+            :loading="loading"
+          >
+            Send Reset Instructions
+          </v-btn>
+          <v-btn v-else color="primary" @click="showForgotPassword = false">
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>

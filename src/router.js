@@ -70,6 +70,11 @@ const router = createRouter({
       path: "/userList",
       name: "userList",
       component: UserList
+    },
+    {
+      path: "/reset-password/:token",
+      name: "resetPassword",
+      component: () => import("./views/ResetPassword.vue")
     }
   ],
 

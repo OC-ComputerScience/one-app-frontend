@@ -29,4 +29,10 @@ export default {
   logoutUser() {
     return apiClient.post("logout");
   },
+  requestPasswordReset(email) {
+    return apiClient.post("users/password/reset-request", { email });
+  },
+  resetPassword(token, newPassword) {
+    return apiClient.post("users/password/reset", { token, newPassword });
+  },
 };
