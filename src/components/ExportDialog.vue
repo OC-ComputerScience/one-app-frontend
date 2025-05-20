@@ -1,11 +1,14 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import ApplicationServices from "../services/ApplicationServices";
+import UserServices from "../services/UserServices";
+import DownloadLogServices from "../services/DownloadLogServices";
 
 const emit = defineEmits(["closeExportDialog"]);
 const props = defineProps(["formData"]);
 
 const dateField = ref(null);
+const lastDownloadDate = ref(null);
 
 const errorMessage = ref("");
 const applications = ref([]);
@@ -18,6 +21,32 @@ const json_fields = ref([]);
 const rules = {
   required: (value) => !!value || "Required.",
 };
+
+const formatDate = (date) => {
+  if (!date) return "Never";
+  return new Date(date).toLocaleString();
+};
+
+const loadUserInfo = async () => {
+  try {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      if (user && user.id) {
+        const response = await UserServices.getUser(user.id);
+        console.log("User data:", response.data);
+        console.log("Last download date:", response.data.lastDownloadDate);
+        lastDownloadDate.value = response.data.lastDownloadDate;
+      }
+    }
+  } catch (error) {
+    console.error("Failed to load user info:", error);
+  }
+};
+
+onMounted(() => {
+  loadUserInfo();
+});
 
 const generateDownload = async () => {
   errorMessage.value = "Generating.....";
@@ -114,10 +143,34 @@ const generateDownload = async () => {
 
   validData.value = true;
 };
-const exported = () => {
+
+const exported = async () => {
   validData.value = false;
   errorMessage.value =
     "Exported Data.." + applications.value.length + " records";
+  try {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      if (user && user.id) {
+        // Use today's date for the last download date
+        const today = new Date();
+        await UserServices.updateLastDownloadDate(user.id, today);
+
+        // Create download log entry
+        const downloadLog = {
+          fileName: `app-data-oneapp-${props.formData.name}.csv`,
+          dateTime: today,
+          userId: user.id,
+          universityId: user.universityId,
+        };
+        await DownloadLogServices.addDownloadLogs(downloadLog);
+      }
+    }
+    closeExportDialog();
+  } catch (error) {
+    console.error("Failed to update download information:", error);
+  }
 };
 
 const closeExportDialog = () => {
@@ -135,6 +188,11 @@ const closeExportDialog = () => {
           This will export the data from applications submitted since 12:00 am
           of the Since Date. This will only export application data for
           applications that have been submitted.
+        </v-card-text>
+        <v-card-text>
+          <div class="text-subtitle-2">
+            Last Download: {{ formatDate(lastDownloadDate) }}
+          </div>
         </v-card-text>
         <v-form v-model="validForm">
           <v-card-text class="mt-2 mb-n4">
