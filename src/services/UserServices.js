@@ -2,7 +2,7 @@ import apiClient from "./services";
 
 export default {
   getUser(id) {
-    return apiClient.get("user/" + id);
+    return apiClient.get("users/" + id);
   },
 
   getAllUsers() {
@@ -34,5 +34,8 @@ export default {
   },
   resetPassword(token, newPassword) {
     return apiClient.post("users/password/reset", { token, newPassword });
+  },
+  updateLastDownloadDate(userId, date) {
+    return apiClient.put(`users/${userId}/last-download`, { date });
   },
 };

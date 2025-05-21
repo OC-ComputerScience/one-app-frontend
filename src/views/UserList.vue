@@ -45,12 +45,23 @@ const message = ref("Update user role");
 
 const update = (user) => {
   let updatedUser = {};
+  console.log("Updating user:", user);
+  console.log("Selected role:", user.role);
 
-  updatedUser.typeId = user.role.type.id;
   updatedUser.id = user.id;
   updatedUser.status = user.status;
-  user.roleName = user.role.type.type;
-  UserServices.updateUser(updatedUser);
+  updatedUser.roleId = user.role.id;
+  console.log("Sending update with data:", updatedUser);
+
+  UserServices.updateUser(updatedUser)
+    .then(() => {
+      console.log("Update successful");
+      retrieveUsers(); // Refresh the user list after update
+    })
+    .catch((error) => {
+      console.error("Update failed:", error);
+      message.value = error.response?.data?.message || "Failed to update user";
+    });
 };
 
 const deleteUser = (user) => {
@@ -167,7 +178,7 @@ retrieveUsers();
               <td>
                 <v-combobox
                   density="comfortable"
-                  v-model="user.role.type"
+                  v-model="user.role"
                   :items="roles"
                   item-title="type"
                   @update:modelValue="update(user)"
