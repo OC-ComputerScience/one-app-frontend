@@ -264,7 +264,7 @@ onMounted(async () => {
       :rules="required ? [rules.required] : []"
     ></v-checkbox>
   </div>
-  <div v-else-if="type === 'Date'">
+  <div v-else-if="type === 'Date'" class="d-flex align-start">
     <v-date-input
       v-model="dateFieldValue"
       variant="outlined"
@@ -274,8 +274,23 @@ onMounted(async () => {
       v-on:blur="saveFieldValue"
       :rules="required ? [rules.date, rules.required] : [rules.date]"
     ></v-date-input>
+    <v-tooltip
+      v-if="props.fieldPageGroup.field.description"
+      location="top"
+      rounded
+    >
+      <template v-slot:activator="{ props: tooltipProps }">
+        <v-icon
+          v-bind="tooltipProps"
+          icon="mdi-information-outline"
+          size="small"
+          class="ml-2 mt-2"
+        ></v-icon>
+      </template>
+      {{ props.fieldPageGroup.field.description }}
+    </v-tooltip>
   </div>
-  <div v-else-if="type === 'Dropdown'">
+  <div v-else-if="type === 'Dropdown'" class="d-flex align-start">
     <v-select
       clearable
       v-model="selectedFieldValue"
@@ -290,8 +305,26 @@ onMounted(async () => {
       v-on:blur="saveFieldValue()"
       :rules="required ? [rules.required] : []"
     ></v-select>
+    <v-tooltip
+      v-if="props.fieldPageGroup.field.description"
+      location="top"
+      rounded
+    >
+      <template v-slot:activator="{ props: tooltipProps }">
+        <v-icon
+          v-bind="tooltipProps"
+          icon="mdi-information-outline"
+          size="small"
+          class="ml-2 mt-2"
+        ></v-icon>
+      </template>
+      {{ props.fieldPageGroup.field.description }}
+    </v-tooltip>
   </div>
-  <div v-else-if="type === 'State' || type === 'Country' || type === 'Major'">
+  <div
+    v-else-if="type === 'State' || type === 'Country' || type === 'Major'"
+    class="d-flex align-start"
+  >
     <v-select
       clearable
       v-model="selectedFieldValue"
@@ -306,8 +339,26 @@ onMounted(async () => {
       v-on:blur="saveFieldValue()"
       :rules="required ? [rules.required] : []"
     ></v-select>
+    <v-tooltip
+      v-if="props.fieldPageGroup.field.description"
+      location="top"
+      rounded
+    >
+      <template v-slot:activator="{ props: tooltipProps }">
+        <v-icon
+          v-bind="tooltipProps"
+          icon="mdi-information-outline"
+          size="small"
+          class="ml-2 mt-2"
+        ></v-icon>
+      </template>
+      {{ props.fieldPageGroup.field.description }}
+    </v-tooltip>
   </div>
-  <div v-else-if="type === 'Email' || type === 'Text'">
+  <div
+    v-else-if="type === 'Email' || type === 'Text'"
+    class="d-flex align-start"
+  >
     <v-text-field
       v-model="appFieldValue.fieldValueName"
       :label="displayFieldlName"
@@ -327,8 +378,23 @@ onMounted(async () => {
       density="compact"
       v-on:blur="saveFieldValue"
     ></v-text-field>
+    <v-tooltip
+      v-if="props.fieldPageGroup.field.description"
+      location="top"
+      rounded
+    >
+      <template v-slot:activator="{ props: tooltipProps }">
+        <v-icon
+          v-bind="tooltipProps"
+          icon="mdi-information-outline"
+          size="small"
+          class="ml-2 mt-2"
+        ></v-icon>
+      </template>
+      {{ props.fieldPageGroup.field.description }}
+    </v-tooltip>
   </div>
-  <div v-else-if="type === 'Phone Number'">
+  <div v-else-if="type === 'Phone Number'" class="d-flex align-start">
     <v-text-field
       v-model="appFieldValue.fieldValueName"
       :label="displayFieldlName"
@@ -339,8 +405,23 @@ onMounted(async () => {
       density="compact"
       v-on:blur="saveFieldValue"
     ></v-text-field>
+    <v-tooltip
+      v-if="props.fieldPageGroup.field.description"
+      location="top"
+      rounded
+    >
+      <template v-slot:activator="{ props: tooltipProps }">
+        <v-icon
+          v-bind="tooltipProps"
+          icon="mdi-information-outline"
+          size="small"
+          class="ml-2 mt-2"
+        ></v-icon>
+      </template>
+      {{ props.fieldPageGroup.field.description }}
+    </v-tooltip>
   </div>
-  <div v-else-if="type === 'Number'">
+  <div v-else-if="type === 'Number'" class="d-flex align-start">
     <v-text-field
       v-model="appFieldValue.fieldValueName"
       :label="displayFieldlName"
@@ -351,19 +432,49 @@ onMounted(async () => {
       v-on:blur="saveFieldValue"
       :rules="required ? [rules.required] : []"
     ></v-text-field>
+    <v-tooltip
+      v-if="props.fieldPageGroup.field.description"
+      location="top"
+      rounded
+    >
+      <template v-slot:activator="{ props: tooltipProps }">
+        <v-icon
+          v-bind="tooltipProps"
+          icon="mdi-information-outline"
+          size="small"
+          class="ml-2 mt-2"
+        ></v-icon>
+      </template>
+      {{ props.fieldPageGroup.field.description }}
+    </v-tooltip>
   </div>
-  <div v-else-if="type === 'Paragraph'">
+  <div v-else-if="type === 'Paragraph'" class="d-flex align-start">
     <v-textarea
       v-model="appFieldValue.fieldValueName"
-      :label="props.fieldPageGroup.field.name"
+      :label="displayFieldlName"
       :placeholder="props.fieldPageGroup.field.placeholderText"
       variant="outlined"
       density="compact"
       v-on:blur="saveFieldValue"
       :rules="required ? [rules.required] : []"
     ></v-textarea>
+    <v-tooltip
+      v-if="props.fieldPageGroup.field.description"
+      location="top"
+      rounded
+    >
+      <template v-slot:activator="{ props: tooltipProps }">
+        <v-icon
+          v-bind="tooltipProps"
+          icon="mdi-information-outline"
+          size="small"
+          class="ml-2 mt-2"
+        ></v-icon>
+      </template>
+      {{ props.fieldPageGroup.field.description }}
+    </v-tooltip>
   </div>
-  <div v-else-if="type === 'Radio'">
+  <div v-else-if="type === 'Radio'" class="d-flex align-start">
     <v-radio-group
       v-model="appFieldValue.fieldValueName"
       :label="displayFieldlName"
@@ -377,5 +488,20 @@ onMounted(async () => {
         :value="fieldValue.value"
       ></v-radio>
     </v-radio-group>
+    <v-tooltip
+      v-if="props.fieldPageGroup.field.description"
+      location="top"
+      rounded
+    >
+      <template v-slot:activator="{ props: tooltipProps }">
+        <v-icon
+          v-bind="tooltipProps"
+          icon="mdi-information-outline"
+          size="small"
+          class="ml-2 mt-2"
+        ></v-icon>
+      </template>
+      {{ props.fieldPageGroup.field.description }}
+    </v-tooltip>
   </div>
 </template>
