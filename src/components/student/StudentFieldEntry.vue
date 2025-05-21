@@ -274,7 +274,11 @@ onMounted(async () => {
       v-on:blur="saveFieldValue"
       :rules="required ? [rules.date, rules.required] : [rules.date]"
     ></v-date-input>
-    <v-tooltip v-if="props.fieldPageGroup.field.description" location="top">
+    <v-tooltip
+      v-if="props.fieldPageGroup.field.description"
+      location="top"
+      rounded
+    >
       <template v-slot:activator="{ props: tooltipProps }">
         <v-icon
           v-bind="tooltipProps"
@@ -301,7 +305,11 @@ onMounted(async () => {
       v-on:blur="saveFieldValue()"
       :rules="required ? [rules.required] : []"
     ></v-select>
-    <v-tooltip v-if="props.fieldPageGroup.field.description" location="top">
+    <v-tooltip
+      v-if="props.fieldPageGroup.field.description"
+      location="top"
+      rounded
+    >
       <template v-slot:activator="{ props: tooltipProps }">
         <v-icon
           v-bind="tooltipProps"
@@ -331,7 +339,11 @@ onMounted(async () => {
       v-on:blur="saveFieldValue()"
       :rules="required ? [rules.required] : []"
     ></v-select>
-    <v-tooltip v-if="props.fieldPageGroup.field.description" location="top">
+    <v-tooltip
+      v-if="props.fieldPageGroup.field.description"
+      location="top"
+      rounded
+    >
       <template v-slot:activator="{ props: tooltipProps }">
         <v-icon
           v-bind="tooltipProps"
@@ -366,7 +378,11 @@ onMounted(async () => {
       density="compact"
       v-on:blur="saveFieldValue"
     ></v-text-field>
-    <v-tooltip v-if="props.fieldPageGroup.field.description" location="top">
+    <v-tooltip
+      v-if="props.fieldPageGroup.field.description"
+      location="top"
+      rounded
+    >
       <template v-slot:activator="{ props: tooltipProps }">
         <v-icon
           v-bind="tooltipProps"
@@ -389,7 +405,11 @@ onMounted(async () => {
       density="compact"
       v-on:blur="saveFieldValue"
     ></v-text-field>
-    <v-tooltip v-if="props.fieldPageGroup.field.description" location="top">
+    <v-tooltip
+      v-if="props.fieldPageGroup.field.description"
+      location="top"
+      rounded
+    >
       <template v-slot:activator="{ props: tooltipProps }">
         <v-icon
           v-bind="tooltipProps"
@@ -412,7 +432,11 @@ onMounted(async () => {
       v-on:blur="saveFieldValue"
       :rules="required ? [rules.required] : []"
     ></v-text-field>
-    <v-tooltip v-if="props.fieldPageGroup.field.description" location="top">
+    <v-tooltip
+      v-if="props.fieldPageGroup.field.description"
+      location="top"
+      rounded
+    >
       <template v-slot:activator="{ props: tooltipProps }">
         <v-icon
           v-bind="tooltipProps"
@@ -434,7 +458,11 @@ onMounted(async () => {
       v-on:blur="saveFieldValue"
       :rules="required ? [rules.required] : []"
     ></v-textarea>
-    <v-tooltip v-if="props.fieldPageGroup.field.description" location="top">
+    <v-tooltip
+      v-if="props.fieldPageGroup.field.description"
+      location="top"
+      rounded
+    >
       <template v-slot:activator="{ props: tooltipProps }">
         <v-icon
           v-bind="tooltipProps"
@@ -460,7 +488,11 @@ onMounted(async () => {
         :value="fieldValue.value"
       ></v-radio>
     </v-radio-group>
-    <v-tooltip v-if="props.fieldPageGroup.field.description" location="top">
+    <v-tooltip
+      v-if="props.fieldPageGroup.field.description"
+      location="top"
+      rounded
+    >
       <template v-slot:activator="{ props: tooltipProps }">
         <v-icon
           v-bind="tooltipProps"
