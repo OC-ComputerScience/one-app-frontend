@@ -185,7 +185,9 @@ const validatePages = () => {
   }
 
   application.value.isComplete = true;
+
   pages.value.forEach((page) => {
+    page.isComplete = "Completed";
     page.pageGroups.forEach((group) => {
       group.isComplete = true;
       group.fieldPageGroups.forEach((fpg) => {
@@ -195,12 +197,14 @@ const validatePages = () => {
             application.value.isComplete = false;
             group.isComplete = false;
             fpg.isComplete = false;
+            page.isComplete = "Not Completed";
           }
           fpg.field.appFieldValues.forEach((afv) => {
             if (afv.fieldValueName == null || afv.fieldValueName == "") {
               application.value.isComplete = false;
               group.isComplete = false;
               fpg.isComplete = false;
+              page.isComplete = "Not Completed";
             }
           });
         }

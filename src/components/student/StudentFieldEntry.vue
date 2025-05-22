@@ -193,7 +193,7 @@ const initializeAppFieldValue = async () => {
       appFieldValue.value.setNumber = props.setNumber;
     }
   }
-  console.log(type.value + "=" + appFieldValue.value.fieldValueName);
+
   if (
     type.value == "Checkbox" &&
     (appFieldValue.value.fieldValueName == null ||
@@ -209,8 +209,12 @@ const initializeAppFieldValue = async () => {
     (appFieldValue.value.fieldValueName == null ||
       appFieldValue.value.fieldValueName == "") &&
     type.value === "Country"
-  )
+  ) {
     appFieldValue.value.fieldValueName = "United States";
+    appFieldValue.value.setNumber = 1;
+    // save default value to database
+    await saveFieldValue();
+  }
 
   if (type.value === "Dropdown" || type.value === "Radio") {
     if (props.fieldPageGroup.field.sorted) {
