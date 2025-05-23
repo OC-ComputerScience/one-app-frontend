@@ -30,11 +30,13 @@ const apiClient = axios.create({
     return JSON.stringify(data);
   },
   transformResponse: function (data) {
-    data = JSON.parse(data);
-    if (!data.success && data.code == "expired-session") {
+ 
+    const parsedData = JSON.parse(data);
+ 
+    if (parsedData && !parsedData.success && parsedData.code === "expired-session") {
       localStorage.removeItem("user");
     }
-    return data;
+    return parsedData;
   },
 });
 
