@@ -30,6 +30,7 @@ const findSetNumber = (index) => {
 const revalidateGroup = (fieldPageGroupId, value, setNumber) => {
   for (let i = 0; i < pageGroup.value.numGroups; i++) {
     pgComplete.value[i] = true;
+    console.log(fieldPageGroupId + " " + setNumber + " " + value);
 
     pageGroup.value.fieldPageGroups.forEach((fpg) => {
       // if fieldPageGroupId not null, then we are updating the field value
@@ -38,18 +39,16 @@ const revalidateGroup = (fieldPageGroupId, value, setNumber) => {
           return a.setNumber - b.setNumber;
         });
         fpg.isComplete = true;
-        let index = fpg.field.appFieldValues.findIndex(
-          (fieldValue) => fieldValue.setNumber === setNumber
-        );
-        if (index === -1) {
-          fpg.field.appFieldValues.push({
-            setNumber: setNumber,
-            fieldValueName: value,
-          });
-          index = fpg.field.appFieldValues.length - 1;
-        }
         if (fpg.id == fieldPageGroupId) {
-          fpg.field.appFieldValues[index].fieldValueName = value;
+          let index = fpg.field.appFieldValues.findIndex(
+            (fieldValue) => fieldValue.setNumber === setNumber
+          );
+          if (index === -1) {
+            fpg.field.appFieldValues.push({
+              setNumber: setNumber,
+              fieldValueName: value,
+            });
+          } else fpg.field.appFieldValues[index].fieldValueName = value;
         }
       }
       if (fpg.field.isRequired) {
