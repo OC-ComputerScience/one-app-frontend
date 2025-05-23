@@ -125,7 +125,6 @@ const createApplication = async () => {
   };
   await ApplicationServices.addApplications(newApplication)
     .then((response) => {
-      console.log(response.data);
       application.value = response.data;
       application.value.isComplete = false;
       appId.value = application.value.id;
@@ -136,24 +135,25 @@ const createApplication = async () => {
 };
 
 const retrievePages = async (setActive) => {
+  let tempPages = null;
   try {
     await PageServices.getPagesByUserId(user.value.id, formId.value).then(
       (response) => {
-        pages.value = response.data;
+        tempPages = response.data;
       }
     );
 
-    pages.value.sort((a, b) => {
+    tempPages.sort((a, b) => {
       return a.pageSequence - b.pageSequence;
     });
 
-    pages.value.forEach((page) => {
+    tempPages.forEach((page) => {
       page.pageGroups.sort((a, b) => {
         return a.groupSequence - b.groupSequence;
       });
     });
 
-    pages.value.forEach((page) => {
+    tempPages.forEach((page) => {
       page.pageGroups.forEach((group) => {
         group.fieldPageGroups.sort((a, b) => {
           return a.sequenceNumber - b.sequenceNumber;
@@ -165,6 +165,7 @@ const retrievePages = async (setActive) => {
         });
       });
     });
+    pages.value = tempPages;
     if (setActive) {
       activePage.value = pages.value[0];
     } else {
